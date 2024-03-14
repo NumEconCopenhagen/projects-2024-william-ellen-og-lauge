@@ -80,7 +80,12 @@ initial_utility_A, initial_utility_B
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Set up the grid for x1A and x2A
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Assuming you have defined 'economy' and 'initial_utility_A', 'initial_utility_B' somewhere before
+
+# Parameters
 N = 75
 x1A_values = np.linspace(0, 1, N+1)
 x2A_values = np.linspace(0, 1, N+1)
@@ -107,18 +112,48 @@ for x1A in x1A_values:
 pareto_efficient_allocations = np.array(pareto_efficient_allocations)
 
 # Plot the Edgeworth box with the Pareto efficient allocations
-plt.figure(figsize=(8, 8))
-plt.plot(pareto_efficient_allocations[:, 0], pareto_efficient_allocations[:, 1], 'o', markersize=2, label='Pareto Efficient Allocations')
-plt.plot(par.w1A, par.w2A, 'r*', markersize=10, label='Initial Endowment A')
-plt.plot(par.w1B, par.w2B, 'b*', markersize=10, label='Initial Endowment B')
-plt.xlabel('$x_1^A$')
-plt.ylabel('$x_2^A$')
+fig = plt.figure(frameon=False, figsize=(8, 8), dpi=100)
+ax_A = fig.add_subplot(1, 1, 1)
+
+ax_A.set_xlabel("$x_1^A$")
+ax_A.set_ylabel("$x_2^A$")
+
+# Plot Pareto efficient allocations
+ax_A.plot(pareto_efficient_allocations[:, 0], pareto_efficient_allocations[:, 1], 'o', markersize=2, label='Pareto Efficient Allocations')
+
+# Plot initial endowments
+ax_A.plot(par.w1A, par.w2A, 'r*', markersize=10, label='Initial Endowment A')
+ax_A.plot(par.w1B, par.w2B, 'b*', markersize=10, label='Initial Endowment B')
+
+# A
+ax_A.scatter(par.w1A,par.w2A,marker='s',color='black',label='endowment')
+
+# limits
+ax_A.plot([0, 1], [0, 0], lw=2, color='black')
+ax_A.plot([0, 1], [1, 1], lw=2, color='black')
+ax_A.plot([0, 0], [0, 1], lw=2, color='black')
+ax_A.plot([1, 1], [0, 1], lw=2, color='black')
+
+ax_A.set_xlim([0, 1])
+ax_A.set_ylim([0, 1])
+  
+
+# Design for B
+temp = ax_A.twinx()
+temp.set_ylabel("$x_2^B$")
+ax_B = temp.twiny()
+ax_B.set_xlabel("$x_1^B$")
+ax_B.invert_xaxis()
+ax_B.invert_yaxis()
+ax_B.set_xlim([1, 0])
+ax_B.set_ylim([1, 0])
+
+# Show the plot
 plt.title('Edgeworth Box')
 plt.legend()
 plt.grid(True)
-plt.xlim(0, 1)
-plt.ylim(0, 1)
 plt.show()
+
 
 
 
