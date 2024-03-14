@@ -27,18 +27,28 @@ class ExchangeEconomyClass:
 
     def utility_A(self,x1A,x2A):
         par = self.par
-        return x1A**par.alpha*x2A**(1-par.alpha)
+        utilA = x1A**par.alpha*x2A**(1-par.alpha)
+        return utilA
         
 
     def utility_B(self,x1B,x2B):
         par = self.par
-        return x1B**par.beta*x2B**(1-par.beta)
+        utilB = x1B**par.beta*x2B**(1-par.beta)
+        return utilB
 
     def demand_A(self,p1):
-        pass
+        par = self.par
+        I = p1*par.w1A + par.w2A  # Income of A
+        x1A = par.alpha * I / p1  # Demand for good 1
+        x2A = (1-par.alpha) * I  # Demand for good 2
+        return x1A, x2A
 
     def demand_B(self,p1):
-        pass
+        par = self.par
+        I = p1*par.w1B + par.w2B  # Income of B
+        x1B = par.beta * I / p1  # Demand for good 1
+        x2B = (1-par.beta) * I  # Demand for good 2
+        return x1B, x2B
 
     def check_market_clearing(self,p1):
 
@@ -47,19 +57,31 @@ class ExchangeEconomyClass:
         x1A,x2A = self.demand_A(p1)
         x1B,x2B = self.demand_B(p1)
 
+        ## Market clearing. If the markets clear, the excess demand is zero.
         eps1 = x1A-par.w1A + x1B-(1-par.w1A)
         eps2 = x2A-par.w2A + x2B-(1-par.w2A)
 
         return eps1,eps2
 
+# Testing...
+# results = ExchangeEconomyClass().utility_A(1,1)
+# print(results)
+    
+# create an instance of the class
+economy = ExchangeEconomyClass()
 
-results = ExchangeEconomyClass().utility_A(1,1)
-print(results)
+# access the par.w1A attribute
+w1A = economy.par.w1A
+
+# use it in the utility_A function
+UtilA_endowment = economy.utility_A(w1A, w2A)
+UtilB_endowment = economy.utility_B(w1B, w2B)
+
 
 
 # a. total endowment
-w1bar = 1.0
-w2bar = 1.0
+# w1bar = 1.0
+# w2bar = 1.0
 
 # b. figure set up
 fig = plt.figure(frameon=False,figsize=(6,6), dpi=100)
