@@ -178,106 +178,106 @@ print(eps1, eps2)
 
 
 
-# a. total endowment
-# w1bar = 1.0
-# w2bar = 1.0
+# # a. total endowment
+# # w1bar = 1.0
+# # w2bar = 1.0
 
-# b. figure set up
-fig = plt.figure(frameon=False,figsize=(6,6), dpi=100)
-ax_A = fig.add_subplot(1, 1, 1)
+# # b. figure set up
+# fig = plt.figure(frameon=False,figsize=(6,6), dpi=100)
+# ax_A = fig.add_subplot(1, 1, 1)
 
-ax_A.set_xlabel("$x_1^A$")
-ax_A.set_ylabel("$x_2^A$")
+# ax_A.set_xlabel("$x_1^A$")
+# ax_A.set_ylabel("$x_2^A$")
 
-temp = ax_A.twinx()
-temp.set_ylabel("$x_2^B$")
-ax_B = temp.twiny()
-ax_B.set_xlabel("$x_1^B$")
-ax_B.invert_xaxis()
-ax_B.invert_yaxis()
+# temp = ax_A.twinx()
+# temp.set_ylabel("$x_2^B$")
+# ax_B = temp.twiny()
+# ax_B.set_xlabel("$x_1^B$")
+# ax_B.invert_xaxis()
+# ax_B.invert_yaxis()
 
-# A
-ax_A.scatter(par.w1A,par.w2A,marker='s',color='black',label='endowment')
+# # A
+# ax_A.scatter(par.w1A,par.w2A,marker='s',color='black',label='endowment')
 
-# limits
-ax_A.plot([0,w1bar],[0,0],lw=2,color='black')
-ax_A.plot([0,w1bar],[w2bar,w2bar],lw=2,color='black')
-ax_A.plot([0,0],[0,w2bar],lw=2,color='black')
-ax_A.plot([w1bar,w1bar],[0,w2bar],lw=2,color='black')
+# # limits
+# ax_A.plot([0,w1bar],[0,0],lw=2,color='black')
+# ax_A.plot([0,w1bar],[w2bar,w2bar],lw=2,color='black')
+# ax_A.plot([0,0],[0,w2bar],lw=2,color='black')
+# ax_A.plot([w1bar,w1bar],[0,w2bar],lw=2,color='black')
 
-ax_A.set_xlim([-0.1, w1bar + 0.1])
-ax_A.set_ylim([-0.1, w2bar + 0.1])    
-ax_B.set_xlim([w1bar + 0.1, -0.1])
-ax_B.set_ylim([w2bar + 0.1, -0.1])
+# ax_A.set_xlim([-0.1, w1bar + 0.1])
+# ax_A.set_ylim([-0.1, w2bar + 0.1])    
+# ax_B.set_xlim([w1bar + 0.1, -0.1])
+# ax_B.set_ylim([w2bar + 0.1, -0.1])
 
-ax_A.legend(frameon=True,loc='upper right',bbox_to_anchor=(1.6,1.0))
+# ax_A.legend(frameon=True,loc='upper right',bbox_to_anchor=(1.6,1.0))
 
 
-###################
-###################
-###################
-###################
-###################
+# ###################
+# ###################
+# ###################
+# ###################
+# ###################
 
-# x parameters
+# # x parameters
 
-alpha_val = 1/3
-beta_val = 2/3
+# alpha_val = 1/3
+# beta_val = 2/3
 
-# x Utility functions
+# # x Utility functions
 
-def utility_A(x1A,x2A):
-    """ utility function for agent A
+# def utility_A(x1A,x2A):
+#     """ utility function for agent A
     
-    Args:
+#     Args:
     
-        x1A (float): consumption of good 1 for agent A
-        x2A (float): consumption of good 2 for agent A
+#         x1A (float): consumption of good 1 for agent A
+#         x2A (float): consumption of good 2 for agent A
         
-    Returns:
+#     Returns:
     
-        uA (float): utility of agent A
+#         uA (float): utility of agent A
     
-    """
+#     """
     
-    uA = x1A**alpha_val * x2A**(1-alpha_val)
-    return uA
+#     uA = x1A**alpha_val * x2A**(1-alpha_val)
+#     return uA
 
-utility_A(1,1)
+# utility_A(1,1)
 
-def utility_B(x1B,x2B):
-    """ utility function for agent B
+# def utility_B(x1B,x2B):
+#     """ utility function for agent B
     
-    Args:
+#     Args:
     
-        x1B (float): consumption of good 1 for agent B
-        x2B (float): consumption of good 2 for agent B
+#         x1B (float): consumption of good 1 for agent B
+#         x2B (float): consumption of good 2 for agent B
         
-    Returns:
+#     Returns:
     
-        uB (float): utility of agent B
+#         uB (float): utility of agent B
     
-    """
+#     """
     
-    uB = x1B**beta_val * x2B**(1-beta_val)
-    return uB
+#     uB = x1B**beta_val * x2B**(1-beta_val)
+#     return uB
 
 
-# x. demand functions
-def square(x):
-    """ square numpy array
+# # x. demand functions
+# def square(x):
+#     """ square numpy array
     
-    Args:
+#     Args:
     
-        x (ndarray): input array
+#         x (ndarray): input array
         
-    Returns:
+#     Returns:
     
-        y (ndarray): output array
+#         y (ndarray): output array
     
-    """
+#     """
     
-    y = x**2
-    return y
+#     y = x**2
+#     return y
 
-print("Hello World!")
+# print("Hello World!")
