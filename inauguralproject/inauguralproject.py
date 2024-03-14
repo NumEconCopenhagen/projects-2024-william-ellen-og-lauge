@@ -80,9 +80,6 @@ initial_utility_A, initial_utility_B
 import numpy as np
 import matplotlib.pyplot as plt
 
-import numpy as np
-import matplotlib.pyplot as plt
-
 # Assuming you have defined 'economy' and 'initial_utility_A', 'initial_utility_B' somewhere before
 
 # Parameters
@@ -152,7 +149,8 @@ ax_B.set_ylim([1, 0])
 plt.title('Edgeworth Box')
 plt.legend()
 plt.grid(True)
-plt.show()
+John = plt.show()
+
 
 
 
