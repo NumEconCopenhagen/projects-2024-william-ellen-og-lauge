@@ -72,10 +72,14 @@ economy = ExchangeEconomyClass()
 
 # access the par.w1A attribute
 w1A = economy.par.w1A
-
+w2A = economy.par.w2A
+w1B = economy.par.w1B
+w2B = economy.par.w2B
 # use it in the utility_A function
 UtilA_endowment = economy.utility_A(w1A, w2A)
 UtilB_endowment = economy.utility_B(w1B, w2B)
+
+x1
 
 
 
