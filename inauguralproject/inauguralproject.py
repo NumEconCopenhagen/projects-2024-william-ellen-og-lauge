@@ -133,7 +133,14 @@ plt.show()
 ########## 2 ##########
 ########## 2 ##########
 
-p1values = np.linspace(0, 2.5, N+1)
+p1values = np.linspace(0.0001, 2.5, N+1)
+for p1 in p1values:
+    eps1, eps2 = economy.check_market_clearing(p1)
+print(eps1, eps2)
+    
+
+
+    
 
 
 
