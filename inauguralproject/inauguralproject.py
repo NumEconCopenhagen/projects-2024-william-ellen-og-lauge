@@ -77,7 +77,8 @@ initial_utility_B = economy.utility_B(par.w1B, par.w2B)
 
 initial_utility_A, initial_utility_B
 
-
+import numpy as np
+import matplotlib.pyplot as plt
 
 # Set up the grid for x1A and x2A
 N = 75
@@ -115,11 +116,21 @@ plt.ylabel('$x_2^A$')
 plt.title('Edgeworth Box')
 plt.legend()
 plt.grid(True)
-plt.xlim(0, 1)
-plt.ylim(0, 1)
 plt.show()
 
 
+
+########## 2 ##########
+########## 2 ##########
+########## 2 ##########
+########## 2 ##########
+########## 2 ##########
+########## 2 ##########
+########## 2 ##########
+########## 2 ##########
+########## 2 ##########
+
+p1values = np.linspace(0, 2.5, N+1)
 
 
 
