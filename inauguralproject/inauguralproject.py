@@ -82,6 +82,7 @@ initial_utility_B = economy.utility_B(par.w1B, par.w2B)
 initial_utility_A, initial_utility_B
 
 import numpy as np
+from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 
 # Assuming you have defined 'economy' and 'initial_utility_A', 'initial_utility_B' somewhere before
@@ -225,6 +226,25 @@ print(find_equilibrium(economy))
 ########## 4a ##########
 ########## 4a ##########
 
+utility_A_values = np.array()
+
+for p1 in p1values:
+    x1A, x2A = economy.demand_A(p1)
+    utility_A = economy.utility_A(x1A, x2A)
+    utility_A_values.append(utility_A)
+    max_utility_A = max(utility_A_values)
+    max_utility_A_index = utility_A_values.index(max_utility_A)
+
+print(max_utility_A, max_utility_A_index)
+
+########## 4b ##########
+########## 4b ##########
+########## 4b ##########
+########## 4b ##########
+
+
+
+
 def negative_utility_A(p1):
     # Get the demand for B given the price p1
     x1B, x2B = economy.demand_B(p1)
@@ -253,13 +273,63 @@ optimal_p1, -res.fun  # We negate the fun value to get the actual utility
 
 print(optimal_p1, -res.fun)
 
-########## 4b ##########
-########## 4b ##########
-########## 4b ##########
-########## 4b ##########
-########## 4b ##########
-########## 4b ##########
 
+
+
+########## 5a ##########
+########## 5a ##########
+########## 5a ##########
+########## 5a ##########
+########## 5a ##########
+
+constant_utility_B = economy.utility_B(par.w1B, par.w2B)
+# Define the constraint
+cons = ({'type': 'eq', 'fun': lambda x:  economy.utility_B(x[0], x[1]) - constant_utility_B})
+
+# Initial guess
+x0 = np.array([0.5, 0.5])
+
+# Define the objective function
+def objective(x):
+    return -economy.utility_A(x[0], x[1])  # We negate the utility to minimize
+
+# Perform the optimization
+res = minimize(objective, x0, constraints=cons, method='SLSQP')
+
+# Print the result
+print('Optimal allocation:', res.x)
+
+
+initial_utility_B = economy.utility_B(par.w1B, par.w2B)
+
+# Define the constraint for B's utility
+def constraint_allocation(x):
+    x1A, x2A = x
+    x1B = 1 - x1A
+    x2B = 1 - x2A
+    return economy.utility_B(x1B, x2B) - initial_utility_B
+
+# Define the optimization problem
+def objective(x):
+    x1A, x2A = x
+    return -economy.utility_A(x1A, x2A)  # negative because minimize will be used
+
+# Starting guess for A's allocation
+x0 = [economy.par.w1A, economy.par.w2A]
+
+# Define the constraints dictionary
+cons = ({'type': 'ineq', 'fun': constraint_allocation})
+
+# Run the optimizer
+res = minimize(objective, x0, constraints=cons)
+
+# Check if the optimization was successful
+if res.success:
+    allocated_x1A, allocated_x2A = res.x
+    utility_A = -res.fun
+    print(f"Allocation for A: x1 = {allocated_x1A}, x2 = {allocated_x2A}, with utility = {utility_A}")
+else:
+    print("Optimization was not successful.")
 
 
 
