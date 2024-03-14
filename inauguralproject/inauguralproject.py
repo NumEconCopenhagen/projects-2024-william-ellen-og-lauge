@@ -2,6 +2,10 @@
 
 # a. imports
 from types import SimpleNamespace
+import numpy as np
+import matplotlib.pyplot as plt
+plt.rcParams.update({"axes.grid":True,"grid.color":"black","grid.alpha":"0.25","grid.linestyle":"--"})
+plt.rcParams.update({'font.size': 14})
 
 
 # b. imported classes
@@ -18,12 +22,17 @@ class ExchangeEconomyClass:
         # b. endowments
         par.w1A = 0.8
         par.w2A = 0.3
+        par.w1B = 1-par.w1A
+        par.w2B = 1-par.w2A
 
     def utility_A(self,x1A,x2A):
-        pass
+        par = self.par
+        return x1A**par.alpha*x2A**(1-par.alpha)
+        
 
     def utility_B(self,x1B,x2B):
-        pass
+        par = self.par
+        return x1B**par.beta*x2B**(1-par.beta)
 
     def demand_A(self,p1):
         pass
@@ -44,7 +53,9 @@ class ExchangeEconomyClass:
         return eps1,eps2
 
 
-par = model.par
+results = ExchangeEconomyClass().utility_A(1,1)
+print(results)
+
 
 # a. total endowment
 w1bar = 1.0
@@ -78,9 +89,9 @@ ax_A.set_ylim([-0.1, w2bar + 0.1])
 ax_B.set_xlim([w1bar + 0.1, -0.1])
 ax_B.set_ylim([w2bar + 0.1, -0.1])
 
-ax_A.legend(frameon=True,loc='upper right',bbox_to_anchor=(1.6,1.0));
+ax_A.legend(frameon=True,loc='upper right',bbox_to_anchor=(1.6,1.0))
 
-William's code
+
 ###################
 ###################
 ###################
