@@ -245,7 +245,7 @@ def negative_utility_A(p1):
     return -utility_A
 
 # Find the price p1 that maximizes utility for A (minimizes the negative utility)
-res = minimize_scalar(negative_utility_A, bounds=(0.5, 2.5), method='bounded')
+res = minimize_scalar(negative_utility_A, bounds=(0.00000, 15), method='bounded')
 
 # The optimal price p1
 optimal_p1 = res.x
