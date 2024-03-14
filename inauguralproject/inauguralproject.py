@@ -69,17 +69,56 @@ class ExchangeEconomyClass:
     
 # create an instance of the class
 economy = ExchangeEconomyClass()
+par = economy.par
 
-# access the par.w1A attribute
-w1A = economy.par.w1A
-w2A = economy.par.w2A
-w1B = economy.par.w1B
-w2B = economy.par.w2B
-# use it in the utility_A function
-UtilA_endowment = economy.utility_A(w1A, w2A)
-UtilB_endowment = economy.utility_B(w1B, w2B)
+# Compute initial utilities
+initial_utility_A = economy.utility_A(par.w1A, par.w2A)
+initial_utility_B = economy.utility_B(par.w1B, par.w2B)
 
-x1
+initial_utility_A, initial_utility_B
+
+
+
+# Set up the grid for x1A and x2A
+N = 75
+x1A_values = np.linspace(0, 1, N+1)
+x2A_values = np.linspace(0, 1, N+1)
+
+# Create arrays to store Pareto efficient allocations
+pareto_efficient_allocations = []
+
+# Iterate over all possible combinations of x1A and x2A
+for x1A in x1A_values:
+    for x2A in x2A_values:
+        # Ensure x1B and x2B are non-negative
+        x1B = 1 - x1A
+        x2B = 1 - x2A
+        if x1B >= 0 and x2B >= 0:
+            # Compute utilities for the current allocation
+            utility_A = economy.utility_A(x1A, x2A)
+            utility_B = economy.utility_B(x1B, x2B)
+
+            # Check if both utilities are at least as high as the initial endowment utilities
+            if utility_A >= initial_utility_A and utility_B >= initial_utility_B:
+                pareto_efficient_allocations.append((x1A, x2A))
+
+# Convert the list of allocations to a NumPy array for plotting
+pareto_efficient_allocations = np.array(pareto_efficient_allocations)
+
+# Plot the Edgeworth box with the Pareto efficient allocations
+plt.figure(figsize=(8, 8))
+plt.plot(pareto_efficient_allocations[:, 0], pareto_efficient_allocations[:, 1], 'o', markersize=2, label='Pareto Efficient Allocations')
+plt.plot(par.w1A, par.w2A, 'r*', markersize=10, label='Initial Endowment A')
+plt.plot(par.w1B, par.w2B, 'b*', markersize=10, label='Initial Endowment B')
+plt.xlabel('$x_1^A$')
+plt.ylabel('$x_2^A$')
+plt.title('Edgeworth Box')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+
 
 
 
