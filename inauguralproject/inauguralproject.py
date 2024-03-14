@@ -79,7 +79,39 @@ w2B = economy.par.w2B
 UtilA_endowment = economy.utility_A(w1A, w2A)
 UtilB_endowment = economy.utility_B(w1B, w2B)
 
-x1
+# From chat
+
+# Generate points in the Edgeworth box corresponding to feasible allocations
+N = 75
+
+x1_vals = np.linspace(0, 1, N+1)
+x2_vals = np.linspace(0, 1, N+1)
+feasible_allocations = []
+for x1A in x1_vals:
+    for x2A in x2_vals:
+        # Calculate corresponding allocations for individual B
+        x1B = 1 - x1A
+        x2B = 1 - x2A
+        # Check if allocation satisfies utility conditions
+        if (economy.utility_A(x1A, x2A) >= economy.utility_A(economy.par.w1A, economy.par.w2A) and
+            economy.utility_B(x1B, x2B) >= economy.utility_B(economy.par.w1B, economy.par.w2B)):
+            feasible_allocations.append((x1A, x2A))
+
+# Plot the Edgeworth box and the feasible allocation set
+plt.figure(figsize=(8, 6))
+plt.plot([0, 1], [1, 0], 'k--')  # Line of perfect equality
+plt.plot([0, w1A], [economy.par.w2A, economy.par.w2A], 'r--')  # Endowment for individual A
+plt.plot([economy.par.w1B, 1], [economy.par.w2B, economy.par.w2B], 'b--')  # Endowment for individual B
+plt.scatter(*zip(*feasible_allocations), color='g', marker='o', label='Feasible Allocations')
+plt.xlabel('$x_1^A$')
+plt.ylabel('$x_2^A$')
+plt.title('Edgeworth Box with Feasible Allocations')
+plt.legend()
+plt.xlim(0, 1)
+plt.ylim(0, 1)
+plt.grid(True)
+plt.gca().set_aspect('equal', adjustable='box')
+plt.show()
 
 
 
