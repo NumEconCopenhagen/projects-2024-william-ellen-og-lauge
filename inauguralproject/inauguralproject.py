@@ -3,6 +3,7 @@
 # a. imports
 from types import SimpleNamespace
 import numpy as np
+#import scipy as sp
 from scipy.optimize import minimize
 from scipy.optimize import minimize_scalar
 
@@ -155,7 +156,9 @@ plt.grid(True)
 John = plt.show()
 
 
-
+def plt(name):
+    plt.show(name)
+    return nameofplot
 
 
 
@@ -249,6 +252,8 @@ optimal_p1 = res.x
 optimal_p1, -res.fun  # We negate the fun value to get the actual utility
 
 print(optimal_p1, -res.fun)
+
+
 # # a. total endowment
 # # w1bar = 1.0
 # # w2bar = 1.0
