@@ -116,7 +116,10 @@ plt.ylabel('$x_2^A$')
 plt.title('Edgeworth Box')
 plt.legend()
 plt.grid(True)
+plt.xlim(0, 1)
+plt.ylim(0, 1)
 plt.show()
+
 
 
 
