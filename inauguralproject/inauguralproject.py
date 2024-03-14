@@ -3,6 +3,9 @@
 # a. imports
 from types import SimpleNamespace
 import numpy as np
+from scipy.optimize import minimize
+from scipy.optimize import minimize_scalar
+
 import matplotlib.pyplot as plt
 plt.rcParams.update({"axes.grid":True,"grid.color":"black","grid.alpha":"0.25","grid.linestyle":"--"})
 plt.rcParams.update({'font.size': 14})
@@ -166,18 +169,86 @@ John = plt.show()
 ########## 2 ##########
 ########## 2 ##########
 
-p1values = np.linspace(0.0001, 2.5, N+1)
+p1values = np.linspace(0.5, 2.5, N+1)
+eps1_values = []
+eps2_values = []
+
 for p1 in p1values:
     eps1, eps2 = economy.check_market_clearing(p1)
-print(eps1, eps2)
+    eps1_values.append(eps1)
+    eps2_values.append(eps2)
+
+#print(eps1_values, eps2_values)
+# Plot the excess demand functions
+plt.figure(figsize=(10, 6))
+plt.plot(p1values, eps1_values, label='eps1')
+plt.plot(p1values, eps2_values, label='eps2')
+plt.xlabel('p1 values')
+plt.ylabel('Excess demand')
+plt.title('Excess demand for different p1 values')
+plt.legend()
+plt.show()
+
+
+
+### Spørg holdunderviser
     
+########## 3 ##########
+########## 3 ##########
+########## 3 ##########
+########## 3 ##########
+########## 3 ##########
+########## 3 ##########
+
+def find_equilibrium(economy):
+    # Define the excess demand function as a function of p1
+    def excess_demand(p1):
+        eps1, eps2 = economy.check_market_clearing(p1)
+        return np.array([eps1, eps2])
+
+    # Call the root finder
+    result = minimize(lambda p1: np.sum(excess_demand(p1)**2), x0=1, method='Nelder-Mead', tol=1e-8)
+    p1_star = result.x[0]
+    return p1_star
+
+print(find_equilibrium(economy))
 
 
+
+########## 4 ##########
+########## 4 ##########
+########## 4 ##########
+########## 4 ##########
+########## 4 ##########
+########## 4 ##########
+
+def negative_utility_A(p1):
+    # Get the demand for B given the price p1
+    x1B, x2B = economy.demand_B(p1)
     
+    # Calculate the remaining goods for A after B's consumption
+    x1A_remaining = 1 - x1B
+    x2A_remaining = 1 - x2B
+    
+    # The utility function for A expects positive consumption, if negative we return a large number
+    if x1A_remaining < 0 or x2A_remaining < 0:
+        return 1e6  # A large number to indicate a bad utility (not feasible)
+    
+    # Get the utility for A with the remaining goods
+    utility_A = economy.utility_A(x1A_remaining, x2A_remaining)
+    
+    # We return the negative utility because we want to maximize the utility,
+    # but the optimizer minimizes the function
+    return -utility_A
 
+# Find the price p1 that maximizes utility for A (minimizes the negative utility)
+res = minimize_scalar(negative_utility_A, bounds=(0.5, 2.5), method='bounded')
 
+# The optimal price p1
+optimal_p1 = res.x
+optimal_p1, -res.fun  # We negate the fun value to get the actual utility
 
-
+print(optimal_p1, -res.fun)
 # # a. total endowment
 # # w1bar = 1.0
 # # w2bar = 1.0
