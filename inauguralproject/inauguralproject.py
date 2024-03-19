@@ -81,9 +81,6 @@ initial_utility_B = economy.utility_B(par.w1B, par.w2B)
 
 initial_utility_A, initial_utility_B
 
-import numpy as np
-from scipy.optimize import minimize
-import matplotlib.pyplot as plt
 
 # Assuming you have defined 'economy' and 'initial_utility_A', 'initial_utility_B' somewhere before
 
@@ -125,7 +122,7 @@ ax_A.plot(pareto_efficient_allocations[:, 0], pareto_efficient_allocations[:, 1]
 
 # Plot initial endowments
 ax_A.plot(par.w1A, par.w2A, 'r*', markersize=10, label='Initial Endowment A')
-ax_A.plot(par.w1B, par.w2B, 'b*', markersize=10, label='Initial Endowment B')
+# ax_A.plot(par.w1B, par.w2B, 'b*', markersize=10, label='Initial Endowment B')
 
 # A
 ax_A.scatter(par.w1A,par.w2A,marker='s',color='black',label='endowment')
@@ -184,14 +181,14 @@ for p1 in p1values:
 
 #print(eps1_values, eps2_values)
 # Plot the excess demand functions
-plt.figure(figsize=(10, 6))
-plt.plot(p1values, eps1_values, label='eps1')
-plt.plot(p1values, eps2_values, label='eps2')
-plt.xlabel('p1 values')
-plt.ylabel('Excess demand')
-plt.title('Excess demand for different p1 values')
-plt.legend()
-plt.show()
+# plt.figure(figsize=(10, 6))
+# plt.plot(p1values, eps1_values, label='eps1')
+# plt.plot(p1values, eps2_values, label='eps2')
+# plt.xlabel('p1 values')
+# plt.ylabel('Excess demand')
+# plt.title('Excess demand for different p1 values')
+# plt.legend()
+# plt.show()
 
 
 
@@ -332,6 +329,106 @@ else:
     print("Optimization was not successful.")
 
 
+########## 5b ##########
+########## 5b ##########
+########## 5b ##########
+########## 5b ##########
+########## 5b ##########
+    
+
+########## 6a ##########
+########## 6a ##########
+########## 6a ##########
+########## 6a ##########
+########## 6a ##########
+
+# Objective function for the social planner
+def objective_function(x):
+    x1A, x2A, x1B, x2B = x
+    return -(economy.utility_A(x1A, x2A) + economy.utility_B(x1B, x2B))
+
+# Constraints for the optimization problem
+def constraint1(x):
+    return x[0] + x[2] - economy.par.w1A - economy.par.w1B
+
+def constraint2(x):
+    return x[1] + x[3] - economy.par.w2A - economy.par.w2B
+
+# Initial guess for consumption allocations
+x0 = [0.5, 0.5, 0.5, 0.5]  
+
+# Bounds for consumption allocations (non-negative consumption)
+bounds = [(0, None)] * 4  # Bounds for each variable
+
+# Defining the constraints
+cons = [{'type': 'eq', 'fun': constraint1}, {'type': 'eq', 'fun': constraint2}]
+
+# Solving the optimization problem
+result = minimize(objective_function, x0, bounds=bounds, constraints=cons)
+
+# Extracting the optimal allocation
+optimal_allocation = result.x
+
+print("Optimal allocation:")
+print("x1A:", optimal_allocation[0])
+print("x2A:", optimal_allocation[1])
+print("x1B:", optimal_allocation[2])
+print("x2B:", optimal_allocation[3])
+
+########## 7 ##########
+########## 7 ##########
+########## 7 ##########
+########## 7 ##########
+########## 7 ##########
+
+# 1: Generate set W
+num_elements = 50
+w1A_values = np.random.uniform(0, 1, num_elements)
+w2A_values = np.random.uniform(0, 1, num_elements)
+
+# 2: Find market equilibrium allocation for each w^A and plot in Edgeworth box
+plt.figure(figsize=(10, 8))
+for w1A, w2A in zip(w1A_values, w2A_values):
+    # Define objective function to minimize excess demand
+    def objective_function(p):
+        p1, p2 = p
+        x1A = alpha * (p1 * w1A + p2 * w2A) / p1
+        x2A = (1 - alpha) * (p1 * w1B + p2 * w2B) / p2
+        x1B = beta * (p1 * w1A + p2 * w2A) / p1
+        x2B = (1 - beta) * (p1 * w1B + p2 * w2B) / p2
+        excess1 = x1A + x1B - w1A - w1B
+        excess2 = x2A + x2B - w2A - w2B
+        return excess1**2 + excess2**2
+
+    # Initial guess for prices
+    p0 = [1.0, 1.0]
+
+    # Minimize the objective function to find market clearing prices
+    result = minimize(objective_function, p0)
+
+    # Extract the market clearing prices
+    p1, p2 = result.x
+
+    # Calculate optimal allocations for individuals A and B
+    x1A = alpha * (p1 * w1A + p2 * w2A) / p1
+    x2A = (1 - alpha) * (p1 * w1B + p2 * w2B) / p2
+    x1B = beta * (p1 * w1A + p2 * w2A) / p1
+    x2B = (1 - beta) * (p1 * w1B + p2 * w2B) / p2
+
+    # Plot the allocation in the Edgeworth box
+    plt.scatter(x1A, x2A, color='blue', alpha=0.5)
+    plt.scatter(x1B, x2B, color='red', alpha=0.5)
+
+# Plot endowments
+plt.scatter(w1A_values, w2A_values, color='green', label='Endowments')
+plt.scatter(w1B, w2B, color='black', label='Endowments')
+plt.xlabel('$x1$')
+plt.ylabel('$x2$')
+plt.title('Edgeworth Box with Market Equilibrium Allocations')
+plt.legend()
+plt.grid(True)
+plt.gca().set_aspect('equal', adjustable='box')
+plt.show()
 
 
 # # a. total endowment
