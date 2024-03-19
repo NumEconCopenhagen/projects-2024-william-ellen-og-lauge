@@ -225,7 +225,9 @@ print(find_equilibrium(economy))
 ########## 4a ##########
 ########## 4a ##########
 
-utility_A_values = np.array()
+import numpy as np
+
+utility_A_values = []
 
 for p1 in p1values:
     x1A, x2A = economy.demand_A(p1)
