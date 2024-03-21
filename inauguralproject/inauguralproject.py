@@ -292,6 +292,11 @@ optimal_x2A = None
 
 for p1 in p1values:
     x1A, x2A = economy.demand_A(p1)
+    
+    # Clip the values to ensure they are between 0 and 1
+    x1A = max(0, min(x1A, 1))
+    x2A = max(0, min(x2A, 1))
+    
     utility_A = economy.utility_A(x1A, x2A)
     utility_A_values.append(utility_A)
     if utility_A == max(utility_A_values):
@@ -303,7 +308,6 @@ max_utility_A = max(utility_A_values)
 print("Optimal utility for A:", max_utility_A)
 print("Optimal x1A value:", optimal_x1A)
 print("Optimal x2A value:", optimal_x2A)
-
 
 
 ########## 4b ##########
