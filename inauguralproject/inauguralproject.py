@@ -253,25 +253,21 @@ print("Optimal x2A value:", optimal_x2A)
 ########## 4b ##########
 ########## 4b ##########
 
-
-
+# Instantiate the ExchangeEconomyClass
+economy = ExchangeEconomyClass()
 
 def negative_utility_A(p1):
-    # Get the demand for B given the price p1
-    x1B, x2B = economy.demand_B(p1)
+    # Get the demand for A given the price p1
+    x1A, x2A = economy.demand_A(p1)
     
-    # Calculate the remaining goods for A after B's consumption
-    x1A_remaining = 1 - x1B
-    x2A_remaining = 1 - x2B
+    # Clip the values to ensure they are between 0 and 1
+    x1A = max(0, min(x1A, 1))
+    x2A = max(0, min(x2A, 1))
     
-    # The utility function for A expects positive consumption, if negative we return a large number
-    if x1A_remaining < 0 or x2A_remaining < 0:
-        return 1e6  # A large number to indicate a bad utility (not feasible)
+    # Calculate the utility for A
+    utility_A = economy.utility_A(x1A, x2A)
     
-    # Get the utility for A with the remaining goods
-    utility_A = economy.utility_A(x1A_remaining, x2A_remaining)
-    
-    # We return the negative utility because we want to maximize the utility,
+    # Return the negative utility because we want to maximize the utility,
     # but the optimizer minimizes the function
     return -utility_A
 
@@ -280,12 +276,12 @@ res = minimize_scalar(negative_utility_A, bounds=(0.00000, 15), method='bounded'
 
 # The optimal price p1
 optimal_p1 = res.x
-optimal_p1, -res.fun  # We negate the fun value to get the actual utility
 
-print(optimal_p1, -res.fun)
+# Calculate the optimal allocation for consumer A given the optimal price p1
+x1A_optimal, x2A_optimal = economy.demand_A(optimal_p1)
 
-
-
+print("Optimal Price p1:", optimal_p1)
+print("Optimal Allocation for Consumer A: x1A =", x1A_optimal, ", x2A =", x2A_optimal)
 
 ########## 5a ##########
 ########## 5a ##########
