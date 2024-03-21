@@ -71,7 +71,7 @@ class ExchangeEconomyClass:
 # results = ExchangeEconomyClass().utility_A(1,1)
 # print(results)
     
-# create an instance of the class
+# creating an instance of the class
 economy = ExchangeEconomyClass()
 par = economy.par
 
@@ -227,16 +227,26 @@ print(find_equilibrium(economy))
 
 import numpy as np
 
+
 utility_A_values = []
+optimal_x1A = None
+optimal_x2A = None
 
 for p1 in p1values:
     x1A, x2A = economy.demand_A(p1)
     utility_A = economy.utility_A(x1A, x2A)
     utility_A_values.append(utility_A)
-    max_utility_A = max(utility_A_values)
-    max_utility_A_index = utility_A_values.index(max_utility_A)
+    if utility_A == max(utility_A_values):
+        optimal_x1A = x1A
+        optimal_x2A = x2A
 
-print(max_utility_A, max_utility_A_index)
+max_utility_A = max(utility_A_values)
+
+print("Optimal utility for A:", max_utility_A)
+print("Optimal x1A value:", optimal_x1A)
+print("Optimal x2A value:", optimal_x2A)
+
+
 
 ########## 4b ##########
 ########## 4b ##########
