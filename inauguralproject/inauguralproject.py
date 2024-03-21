@@ -66,6 +66,33 @@ class ExchangeEconomyClass:
         eps2 = x2A-par.w2A + x2B-(1-par.w2A)
 
         return eps1,eps2
+    
+    def optimize_allocation(self):
+        par = self.par
+
+        # Compute utility at endowment for B
+        util_endowment_B = self.utility_B(par.w1B, par.w2B)
+        util_endowment_A = self.utility_A(par.w1A, par.w2A)
+
+        # Define the feasible set C
+        N = 75
+        feasible_set_C = [(x1A, x2A) for x1A in np.arange(0, N+1, 1) / N
+                          for x2A in np.arange(0, N+1, 1) / N
+                          if self.utility_B(1 - x1A, 1 - x2A) >= util_endowment_B]
+
+        # Initialize maximum utility and corresponding allocation for A
+        max_util_A = util_endowment_A
+        optimal_allocation_A = (par.w1A, par.w2A)
+
+        # Iterate over all allocations in the choice set C
+        for x1A, x2A in feasible_set_C:
+            util_A = self.utility_A(x1A, x2A)
+            # Check if this allocation yields a higher utility than the current maximum for A
+            if util_A > max_util_A:
+                max_util_A = util_A
+                optimal_allocation_A = (x1A, x2A)
+
+        return optimal_allocation_A, max_util_A
 
 # Testing...
 # results = ExchangeEconomyClass().utility_A(1,1)
@@ -151,12 +178,12 @@ ax_B.set_ylim([1, 0])
 plt.title('Edgeworth Box')
 plt.legend()
 plt.grid(True)
-John = plt.show()
+# John = plt.show()
 
 
-def plt(name):
-    plt.show(name)
-    return nameofplot
+# def plt(name):
+#     plt.show(name)
+#     return nameofplot
 
 
 
@@ -190,7 +217,8 @@ plt.xlabel('p1 values')
 plt.ylabel('Excess demand')
 plt.title('Excess demand for different p1 values')
 plt.legend()
-plt.show()
+# plt.show()
+
 
 
 
@@ -283,62 +311,103 @@ print(optimal_p1, -res.fun)
 ########## 5a ##########
 ########## 5a ##########
 
-constant_utility_B = economy.utility_B(par.w1B, par.w2B)
-# Define the constraint
-cons = ({'type': 'eq', 'fun': lambda x:  economy.utility_B(x[0], x[1]) - constant_utility_B})
+# The `results` function has some issues that need to be fixed. Specifically:
+# 1. In `economy.optimize_allocation()`, it returns only two values, but in the `results` function, 
+#    there is an attempt to unpack four values from it.
+# 2. The `final_utility_B` calculation seems to be using the wrong indices from `optimal_allocation_A`.
 
-# Initial guess
-x0 = np.array([0.5, 0.5])
+# Let's correct the `results` function and define a print command to print all the outputs.
 
-# Define the objective function
+def results(economy):
+    # Utility at endowment
+    endowment_utility_A = economy.utility_A(economy.par.w1A, economy.par.w2A)
+    endowment_utility_B = economy.utility_B(economy.par.w1B, economy.par.w2B)
+    # Endowments
+    endow_A = (economy.par.w1A, economy.par.w2A)
+    endow_B = (economy.par.w1B, economy.par.w2B)
+    # Optimal allocation
+    optimal_allocation_A, max_util_A = economy.optimize_allocation()
+    # We assume the final allocation for B is whatever is left after A's allocation
+    final_allocation_B = (1-optimal_allocation_A[0], 1-optimal_allocation_A[1])
+    # Utility for B at the final allocation
+    final_utility_B = economy.utility_B(final_allocation_B[0], final_allocation_B[1])
+    
+    # Print results
+    print(f"Utility for A at A's endowment: {endowment_utility_A}")
+    print(f"Utility for B at B's endowment: {endowment_utility_B}")
+    print(f"Endowment for A: {endow_A}")
+    print(f"Endowment for B: {endow_B}")
+    print(f"Optimal allocation for A: {optimal_allocation_A}")
+    print(f"Max utility for A at optimal allocation: {max_util_A}")
+    print(f"Final allocation for B: {final_allocation_B}")
+    print(f"Utility for B at final allocation: {final_utility_B}")
+
+# Let's call the function to print the results.
+results(economy)
+
+
+########## 5b ##########
+########## 5b ##########
+########## 5b ##########
+########## 5b ##########
+########## 5b ##########
+# Define the utility of B at the endowment within the function
+endowment_utility_B = economy.utility_B(economy.par.w1B, economy.par.w2B)
+
+# Redefine the objective and constraints using the correct scope
 def objective(x):
-    return -economy.utility_A(x[0], x[1])  # We negate the utility to minimize
+    return -economy.utility_A(x[0], x[1])
 
-# Perform the optimization
-res = minimize(objective, x0, constraints=cons, method='SLSQP')
+def constraint(x):
+    return economy.utility_B(1-x[0], 1-x[1]) - endowment_utility_B
 
-# Print the result
-print('Optimal allocation:', res.x)
+# Constraint dictionary
+con = {'type': 'ineq', 'fun': constraint}
 
+# Bounds for x1A and x2A (can't be negative or greater than total endowment)
+bnds = ((0, 1), (0, 1))
 
-initial_utility_B = economy.utility_B(par.w1B, par.w2B)
-
-# Define the constraint for B's utility
-def constraint_allocation(x):
-    x1A, x2A = x
-    x1B = 1 - x1A
-    x2B = 1 - x2A
-    return economy.utility_B(x1B, x2B) - initial_utility_B
-
-# Define the optimization problem
-def objective(x):
-    x1A, x2A = x
-    return -economy.utility_A(x1A, x2A)  # negative because minimize will be used
-
-# Starting guess for A's allocation
+# Initial guess (starting from A's endowment)
 x0 = [economy.par.w1A, economy.par.w2A]
 
-# Define the constraints dictionary
-cons = ({'type': 'ineq', 'fun': constraint_allocation})
+# Run the optimization again with the correct definition of endowment_utility_B in scope
+solution = minimize(objective, x0, method='SLSQP', bounds=bnds, constraints=con)
 
-# Run the optimizer
-res = minimize(objective, x0, constraints=cons)
-
-# Check if the optimization was successful
-if res.success:
-    allocated_x1A, allocated_x2A = res.x
-    utility_A = -res.fun
-    print(f"Allocation for A: x1 = {allocated_x1A}, x2 = {allocated_x2A}, with utility = {utility_A}")
+# If the optimizer found a solution, extract it. Otherwise, set to None.
+if solution.success:
+    optimal_continuous_allocation_A = solution.x
+    max_continuous_util_A = -solution.fun  # Negate because we minimized the negative utility
 else:
-    print("Optimization was not successful.")
+    optimal_continuous_allocation_A = None
+    max_continuous_util_A = None
+
+optimal_continuous_allocation_A, max_continuous_util_A
 
 
-########## 5b ##########
-########## 5b ##########
-########## 5b ##########
-########## 5b ##########
-########## 5b ##########
-    
+def results5b(economy, optimal_allocation, max_utility):
+    # Calculate initial utilities and endowments
+    endowment_utility_A = economy.utility_A(economy.par.w1A, economy.par.w2A)
+    endowment_utility_B = economy.utility_B(economy.par.w1B, economy.par.w2B)
+    endow_A = (economy.par.w1A, economy.par.w2A)
+    endow_B = (economy.par.w1B, economy.par.w2B)
+
+    # Final utility and allocation for B based on A's optimal allocation
+    final_allocation_B = (1 - optimal_allocation[0], 1 - optimal_allocation[1])
+    final_utility_B = economy.utility_B(final_allocation_B[0], final_allocation_B[1])
+
+    # Print results
+    print(f"Initial utility for A: {endowment_utility_A}")
+    print(f"Initial utility for B: {endowment_utility_B}")
+    print(f"Initial endowment for A: {endow_A}")
+    print(f"Initial endowment for B: {endow_B}")
+    print(f"Optimal continuous allocation for A: {optimal_allocation}")
+    print(f"Maximum continuous utility for A: {max_utility}")
+    print(f"Final allocation for B: {final_allocation_B}")
+    print(f"Final utility for B: {final_utility_B}")
+
+# Call the results5b function with the results of the continuous optimization
+results5b(economy, optimal_continuous_allocation_A, max_continuous_util_A)
+
 
 ########## 6a ##########
 ########## 6a ##########
@@ -439,7 +508,7 @@ for economy.par.w1A, economy.par.w2A in zip(w1A_values, w2A_values):
 plt.legend()
 plt.grid(True)
 plt.gca().set_aspect('equal', adjustable='box')
-plt.show()
+# plt.show()
 
 
 # # a. total endowment
