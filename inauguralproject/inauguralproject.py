@@ -253,8 +253,38 @@ print(find_equilibrium(economy))
 ########## 4a ##########
 ########## 4a ##########
 
-import numpy as np
 
+
+utility_values = []
+optimal_allocations = []
+N = 75
+p1values = np.linspace(0.5, 2.5, N+1)
+for p1 in p1values:
+    x1B, x2B = economy.demand_B(p1)
+    # Check if the allocation is feasible (non-negative for both A and B)
+    if x1B >= 0 and x2B >= 0 and (1 - x1B) >= 0 and (1 - x2B) >= 0:
+        # Utility of A given her allocation (the rest of the endowment)
+        utility_A = economy.utility_A(1 - x1B, 1 - x2B)
+        utility_values.append(utility_A)
+        optimal_allocations.append((1 - x1B, 1 - x2B))
+    else:
+        # Append a very low utility value for non-feasible allocations
+        utility_values.append(-np.inf)
+        optimal_allocations.append((None, None))
+
+# Find the index of the maximum utility value excluding non-feasible allocations
+max_utility_index = np.argmax(utility_values)  # This will ignore -np.inf values
+max_utility = utility_values[max_utility_index]
+optimal_allocation_A = optimal_allocations[max_utility_index]
+optimal_p1 = p1values[max_utility_index]
+
+# Print the results
+print("4.a Index of max utility:", max_utility_index)
+print("Max utility:", max_utility)
+print("Optimal allocation for A:", optimal_allocation_A)
+print("Optimal price p1:", optimal_p1)
+
+    
 
 utility_A_values = []
 optimal_x1A = None
