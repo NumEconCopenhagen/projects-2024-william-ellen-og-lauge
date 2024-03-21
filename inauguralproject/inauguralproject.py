@@ -94,6 +94,8 @@ class ExchangeEconomyClass:
 
         return optimal_allocation_A, max_util_A
 
+
+
 # Testing...
 # results = ExchangeEconomyClass().utility_A(1,1)
 # print(results)
@@ -246,6 +248,10 @@ print(find_equilibrium(economy))
 
 Optimal_3_A = [economy.demand_A(find_equilibrium(economy))]
 Optimal_3_B = [economy.demand_B(find_equilibrium(economy))]
+# Convert the tuples in the lists to single lists
+Optimal_3_A = [item for sublist in Optimal_3_A for item in sublist]
+Optimal_3_B = [item for sublist in Optimal_3_B for item in sublist]
+
 
 ########## 4a ##########
 ########## 4a ##########
@@ -354,6 +360,8 @@ print("Optimal Price p1:", optimal_p1)
 print("Optimal Allocation for Consumer A: x1A =", x1A_optimal, ", x2A =", x2A_optimal)
 Optimal_4B_A = [x1A_optimal, x2A_optimal]
 Optimal_4B_B = [1 - x1A_optimal, 1 - x2A_optimal]
+print("Optimal Allocation for Consumer B: x1B =", Optimal_4B_B[0], ", x2B =", Optimal_4B_B[1])
+print("Optimal allocation for consumer A: x1A =", Optimal_4B_A[0], ", x2A =", Optimal_4B_A[1])
 ########## 5a ##########
 ########## 5a ##########
 ########## 5a ##########
@@ -511,14 +519,26 @@ print("x2B:", optimal_allocation[3])
 ########## 6b ##########
 ########## 6b ##########
 ########## 6b ##########
-import matplotlib.pyplot as plt
 
-# Coordinates of optimal points for consumer A
-Optimal_3_A = (0.3725490199048352, 0.7037037022908529)
-Optimal_4a_A = (0.33274596182085164, 1)
-Optimal_4B_A = (0.3333331886798263, 1.000001735845851)
-Optimal_5A_A = (0.619316843345112, 0.6408888888888888)
-Optimal_5B_A = (0.5757450571871308, 0.8444377880991675)
+# Define the allocations
+Optimal_3_A
+Optimal_3_B
+
+Optimal_4a_A
+Optimal_4a_B
+
+Optimal_4B_A
+Optimal_4B_B
+
+Optimal_5A_A
+Optimal_5A_B
+
+Optimal_5B_A
+Optimal_5B_B
+
+allocations_A = [Optimal_3_A, Optimal_4a_A, Optimal_4B_A, Optimal_5A_A, Optimal_5B_A]
+allocations_B = [Optimal_3_B, Optimal_4a_B, Optimal_4B_B, Optimal_5A_B, Optimal_5B_B]
+
 
 # Plot the Edgeworth box with the initial endowments
 fig = plt.figure(frameon=False, figsize=(8, 8), dpi=100)
@@ -527,18 +547,27 @@ ax_A = fig.add_subplot(1, 1, 1)
 ax_A.set_xlabel("$x_1^A$")
 ax_A.set_ylabel("$x_2^A$")
 
-# Plot initial endowments
-ax_A.plot(par.w1A, par.w2A, 'r*', markersize=10, label='Initial Endowment A')
+# Inside your plotting section
+# Replace the ax_A.scatter(...) lines with the following:
+for alloc in allocations_A:
+    if len(alloc) == 2:
+        ax_A.scatter(alloc[0], alloc[1], label='Allocations A', color='blue', zorder=5)
+    else:
+        print(f"Skipping an element in allocations_A: {alloc} (invalid length)")
 
-# Plot individual endowments
-ax_A.scatter(par.w1A, par.w2A, marker='s', color='black', label='Endowment')
+for alloc in allocations_B:
+    if len(alloc) == 2:
+        ax_A.scatter(alloc[0], alloc[1], label='Allocations B', color='orange', zorder=5)
+    else:
+        print(f"Skipping an element in allocations_B: {alloc} (invalid length)")
 
-# Plot optimal allocations for consumer A
-ax_A.plot(Optimal_3_A[0], Optimal_3_A[1], 'o', markersize=8, label='Allocation with market clearing price')
-ax_A.plot(Optimal_4a_A[0], Optimal_4a_A[1], 'o', markersize=8, label='Allocation when $p_1 \in \mathcal{P}_1$ ')
-ax_A.plot(Optimal_4B_A[0], Optimal_4B_A[1], 'o', markersize=8, label='Allocation for $p_1 > 0$')
-ax_A.plot(Optimal_5A_A[0], Optimal_5A_A[1], 'o', markersize=8, label='Allocation when $(x_1^A, x_2^A) \in \mathcal{C$')
-ax_A.plot(Optimal_5B_A[0], Optimal_5B_A[1], 'o', markersize=8, label='Allocation when no restrictions are imposed')
+
+# And replace the ax_A.annotate(...) lines with the following:
+for i, txt in enumerate(['Optimal_3', 'Optimal_4a', 'Optimal_4B', 'Optimal_5A', 'Optimal_5B']):
+    ax_A.annotate(txt + '_A', (allocations_A[i][0], allocations_A[i][1]), textcoords="offset points", xytext=(5,-5))
+    ax_A.annotate(txt + '_B', (allocations_B[i][0], allocations_B[i][1]), textcoords="offset points", xytext=(5,-5))
+
+
 
 # Plot the limits
 ax_A.plot([0, 1], [0, 0], lw=2, color='black')
@@ -563,12 +592,29 @@ ax_B.set_ylim([1, 0])
 ax_A.legend()
 
 # Show the plot
-plt.title('Edgeworth Box with Optimal Allocations')
+plt.title('Edgeworth Box')
+#plt.legend()
 plt.grid(True)
 plt.show()
 
+# Evaluate each allocation and store the utility values
+utility_values_A = [economy.utility_A(x1A, x2A) for x1A, x2A in allocations_A]
+utility_values_B = [economy.utility_B(x1B, x2B) for x1B, x2B in allocations_B]
 
+# Calculate the total utility for each allocation
+total_utilities = [utilA + utilB for utilA, utilB in zip(utility_values_A, utility_values_B)]
 
+# Create a table with individual utilities and total utility
+import pandas as pd
+
+utility_table = pd.DataFrame({
+    'Allocation': range(1, len(allocations_A) + 1),
+    'Utility A': utility_values_A,
+    'Utility B': utility_values_B,
+    'Total Utility': total_utilities
+})
+
+print(utility_table)
 
 ########## 7 ##########
 ########## 7 ##########
