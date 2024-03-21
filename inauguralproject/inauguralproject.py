@@ -253,7 +253,7 @@ print(find_equilibrium(economy))
 ########## 4a ##########
 ########## 4a ##########
 
-
+#One interpretation
 
 utility_values = []
 optimal_allocations = []
@@ -284,7 +284,7 @@ print("Max utility:", max_utility)
 print("Optimal allocation for A:", optimal_allocation_A)
 print("Optimal price p1:", optimal_p1)
 
-    
+#Another interpretation    
 
 utility_A_values = []
 optimal_x1A = None
