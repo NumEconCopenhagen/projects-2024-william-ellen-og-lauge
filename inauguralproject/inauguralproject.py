@@ -244,7 +244,8 @@ def find_equilibrium(economy):
 
 print(find_equilibrium(economy))
 
-
+Optimal_3_A = [economy.demand_A(find_equilibrium(economy))]
+Optimal_3_B = [economy.demand_B(find_equilibrium(economy))]
 
 ########## 4a ##########
 ########## 4a ##########
@@ -278,6 +279,9 @@ max_utility = utility_values[max_utility_index]
 optimal_allocation_A = optimal_allocations[max_utility_index]
 optimal_p1 = p1values[max_utility_index]
 
+
+
+
 # Print the results
 print("4.a Index of max utility:", max_utility_index)
 print("Max utility:", max_utility)
@@ -308,6 +312,10 @@ max_utility_A = max(utility_A_values)
 print("Optimal utility for A:", max_utility_A)
 print("Optimal x1A value:", optimal_x1A)
 print("Optimal x2A value:", optimal_x2A)
+
+
+Optimal_4a_A = [optimal_x1A, optimal_x2A]
+Optimal_4a_B = [1 - optimal_x1A, 1 - optimal_x2A]
 
 
 ########## 4b ##########
@@ -344,7 +352,8 @@ x1A_optimal, x2A_optimal = economy.demand_A(optimal_p1)
 
 print("Optimal Price p1:", optimal_p1)
 print("Optimal Allocation for Consumer A: x1A =", x1A_optimal, ", x2A =", x2A_optimal)
-
+Optimal_4B_A = [x1A_optimal, x2A_optimal]
+Optimal_4B_B = [1 - x1A_optimal, 1 - x2A_optimal]
 ########## 5a ##########
 ########## 5a ##########
 ########## 5a ##########
@@ -381,9 +390,12 @@ def results(economy):
     print(f"Max utility for A at optimal allocation: {max_util_A}")
     print(f"Final allocation for B: {final_allocation_B}")
     print(f"Utility for B at final allocation: {final_utility_B}")
+    return optimal_allocation_A, max_util_A
 
 # Let's call the function to print the results.
 results(economy)
+Optimal_5A_A = [optimal_allocation_A[0], optimal_allocation_A[1]]
+Optimal_5A_B = [1 - optimal_allocation_A[0], 1 - optimal_allocation_A[1]]
 
 
 ########## 5b ##########
@@ -448,6 +460,8 @@ def results5b(economy, optimal_allocation, max_utility):
 # Call the results5b function with the results of the continuous optimization
 results5b(economy, optimal_continuous_allocation_A, max_continuous_util_A)
 
+Optimal_5B_A = [optimal_continuous_allocation_A[0], optimal_continuous_allocation_A[1]]
+Optimal_5B_B = [1 - optimal_continuous_allocation_A[0], 1 - optimal_continuous_allocation_A[1]]
 
     
 
@@ -490,15 +504,75 @@ print("x2A:", optimal_allocation[1])
 print("x1B:", optimal_allocation[2])
 print("x2B:", optimal_allocation[3])
 
+
+########## 6b ##########
 ########## 6b ##########
 ########## 6b ##########
 ########## 6b ##########
 ########## 6b ##########
 ########## 6b ##########
 
+# Define the allocations
+Optimal_3_A
+Optimal_3_B
+
+Optimal_4a_A
+Optimal_4a_B
+
+Optimal_4B_A
+Optimal_4B_B
+
+Optimal_5A_A
+Optimal_5A_B
+
+Optimal_5B_A
+Optimal_5B_B
+
+allocations_A = np.array([Optimal_3_A, Optimal_4a_A, Optimal_4B_A, Optimal_5A_A, Optimal_5B_A])
+allocations_B = np.array([Optimal_3_B, Optimal_4a_B, Optimal_4B_B, Optimal_5A_B, Optimal_5B_B])
+
+print('6bbbbbbbbb', allocations_A, allocations_B)
+
+# Plot the Edgeworth box with the allocations
+fig = plt.figure(frameon=False, figsize=(8, 8), dpi=100)
+ax_A = fig.add_subplot(1, 1, 1)
+
+ax_A.set_xlabel("$x_1^A$")
+ax_A.set_ylabel("$x_2^A$")
 
 
+ax_A.scatter(allocations_A[:, 0], allocations_A[:, 1], label='Allocations A', color='blue', zorder=5)
+ax_A.scatter(allocations_B[:, 0], allocations_B[:, 1], label='Allocations B', color='orange', zorder=5)
 
+# Label the points
+for i, txt in enumerate(['Optimal_3', 'Optimal_4a', 'Optimal_4B', 'Optimal_5A', 'Optimal_5B']):
+    ax_A.annotate(txt + '_A', (allocations_A[i, 0], allocations_A[i, 1]), textcoords="offset points", xytext=(5,-5))
+    ax_A.annotate(txt + '_B', (allocations_B[i, 0], allocations_B[i, 1]), textcoords="offset points", xytext=(5,-5))
+
+# Limits
+ax_A.plot([0, 1], [0, 0], lw=2, color='black')
+ax_A.plot([0, 1], [1, 1], lw=2, color='black')
+ax_A.plot([0, 0], [0, 1], lw=2, color='black')
+ax_A.plot([1, 1], [0, 1], lw=2, color='black')
+
+ax_A.set_xlim([0, 1])
+ax_A.set_ylim([0, 1])
+
+# Design for B
+temp = ax_A.twinx()
+temp.set_ylabel("$x_2^B$")
+ax_B = temp.twiny()
+ax_B.set_xlabel("$x_1^B$")
+ax_B.invert_xaxis()
+ax_B.invert_yaxis()
+ax_B.set_xlim([1, 0])
+ax_B.set_ylim([1, 0])
+
+# Show the plot
+plt.title('Edgeworth Box')
+plt.legend()
+plt.grid(True)
+plt.show()
 ########## 7 ##########
 ########## 7 ##########
 ########## 7 ##########
@@ -562,106 +636,3 @@ plt.gca().set_aspect('equal', adjustable='box')
 # plt.show()
 
 
-# # a. total endowment
-# # w1bar = 1.0
-# # w2bar = 1.0
-
-# # b. figure set up
-# fig = plt.figure(frameon=False,figsize=(6,6), dpi=100)
-# ax_A = fig.add_subplot(1, 1, 1)
-
-# ax_A.set_xlabel("$x_1^A$")
-# ax_A.set_ylabel("$x_2^A$")
-
-# temp = ax_A.twinx()
-# temp.set_ylabel("$x_2^B$")
-# ax_B = temp.twiny()
-# ax_B.set_xlabel("$x_1^B$")
-# ax_B.invert_xaxis()
-# ax_B.invert_yaxis()
-
-# # A
-# ax_A.scatter(par.w1A,par.w2A,marker='s',color='black',label='endowment')
-
-# # limits
-# ax_A.plot([0,w1bar],[0,0],lw=2,color='black')
-# ax_A.plot([0,w1bar],[w2bar,w2bar],lw=2,color='black')
-# ax_A.plot([0,0],[0,w2bar],lw=2,color='black')
-# ax_A.plot([w1bar,w1bar],[0,w2bar],lw=2,color='black')
-
-# ax_A.set_xlim([-0.1, w1bar + 0.1])
-# ax_A.set_ylim([-0.1, w2bar + 0.1])    
-# ax_B.set_xlim([w1bar + 0.1, -0.1])
-# ax_B.set_ylim([w2bar + 0.1, -0.1])
-
-# ax_A.legend(frameon=True,loc='upper right',bbox_to_anchor=(1.6,1.0))
-
-
-# ###################
-# ###################
-# ###################
-# ###################
-# ###################
-
-# # x parameters
-
-# alpha_val = 1/3
-# beta_val = 2/3
-
-# # x Utility functions
-
-# def utility_A(x1A,x2A):
-#     """ utility function for agent A
-    
-#     Args:
-    
-#         x1A (float): consumption of good 1 for agent A
-#         x2A (float): consumption of good 2 for agent A
-        
-#     Returns:
-    
-#         uA (float): utility of agent A
-    
-#     """
-    
-#     uA = x1A**alpha_val * x2A**(1-alpha_val)
-#     return uA
-
-# utility_A(1,1)
-
-# def utility_B(x1B,x2B):
-#     """ utility function for agent B
-    
-#     Args:
-    
-#         x1B (float): consumption of good 1 for agent B
-#         x2B (float): consumption of good 2 for agent B
-        
-#     Returns:
-    
-#         uB (float): utility of agent B
-    
-#     """
-    
-#     uB = x1B**beta_val * x2B**(1-beta_val)
-#     return uB
-
-
-# # x. demand functions
-# def square(x):
-#     """ square numpy array
-    
-#     Args:
-    
-#         x (ndarray): input array
-        
-#     Returns:
-    
-#         y (ndarray): output array
-    
-#     """
-    
-#     y = x**2
-#     return y
-
-# print("Hello World!")
