@@ -294,34 +294,37 @@ print("Max utility:", max_utility)
 print("Optimal allocation for A:", optimal_allocation_A)
 print("Optimal price p1:", optimal_p1)
 
+Optimal_4a_A = optimal_allocation_A
+Optimal_4a_B = [1 - optimal_allocation_A[0], 1 - optimal_allocation_A[1]]
+
 #Another interpretation    
+#TODO The part below is remarked out, because it gives the wrong result. 
+# utility_A_values = []
+# optimal_x1A = None
+# optimal_x2A = None
 
-utility_A_values = []
-optimal_x1A = None
-optimal_x2A = None
-
-for p1 in p1values:
-    x1A, x2A = economy.demand_A(p1)
+# for p1 in p1values:
+#     x1A, x2A = economy.demand_A(p1)
     
-    # Clip the values to ensure they are between 0 and 1
-    x1A = max(0, min(x1A, 1))
-    x2A = max(0, min(x2A, 1))
+#     # Clip the values to ensure they are between 0 and 1
+#     x1A = max(0, min(x1A, 1))
+#     x2A = max(0, min(x2A, 1))
     
-    utility_A = economy.utility_A(x1A, x2A)
-    utility_A_values.append(utility_A)
-    if utility_A == max(utility_A_values):
-        optimal_x1A = x1A
-        optimal_x2A = x2A
+#     utility_A = economy.utility_A(x1A, x2A)
+#     utility_A_values.append(utility_A)
+#     if utility_A == max(utility_A_values):
+#         optimal_x1A = x1A
+#         optimal_x2A = x2A
 
-max_utility_A = max(utility_A_values)
+# max_utility_A = max(utility_A_values)
 
-print("Optimal utility for A:", max_utility_A)
-print("Optimal x1A value:", optimal_x1A)
-print("Optimal x2A value:", optimal_x2A)
+# print("Optimal utility for A:", max_utility_A)
+# print("Optimal x1A value:", optimal_x1A)
+# print("Optimal x2A value:", optimal_x2A)
 
 
-Optimal_4a_A = [optimal_x1A, optimal_x2A]
-Optimal_4a_B = [1 - optimal_x1A, 1 - optimal_x2A]
+# Optimal_4a_A = [optimal_x1A, optimal_x2A]
+# Optimal_4a_B = [1 - optimal_x1A, 1 - optimal_x2A]
 
 
 ########## 4b ##########
