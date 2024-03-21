@@ -511,7 +511,8 @@ print("x1A:", optimal_allocation[0])
 print("x2A:", optimal_allocation[1])
 print("x1B:", optimal_allocation[2])
 print("x2B:", optimal_allocation[3])
-
+Optimal_6A_A = [optimal_allocation[0], optimal_allocation[1]]
+Optimal_6A_B = [optimal_allocation[2], optimal_allocation[3]]
 
 ########## 6b ##########
 ########## 6b ##########
@@ -536,8 +537,11 @@ Optimal_5A_B
 Optimal_5B_A
 Optimal_5B_B
 
-allocations_A = [Optimal_3_A, Optimal_4a_A, Optimal_4B_A, Optimal_5A_A, Optimal_5B_A]
-allocations_B = [Optimal_3_B, Optimal_4a_B, Optimal_4B_B, Optimal_5A_B, Optimal_5B_B]
+Optimal_6A_A
+Optimal_6A_B
+
+allocations_A = [Optimal_3_A, Optimal_4a_A, Optimal_4B_A, Optimal_5A_A, Optimal_5B_A, Optimal_6A_A]
+allocations_B = [Optimal_3_B, Optimal_4a_B, Optimal_4B_B, Optimal_5A_B, Optimal_5B_B, Optimal_6A_B]
 
 
 # Plot the Edgeworth box with the allocations
@@ -563,7 +567,7 @@ for alloc in allocations_B:
 
 
 # And replace the ax_A.annotate(...) lines with the following:
-for i, txt in enumerate(['Optimal_3', 'Optimal_4a', 'Optimal_4B', 'Optimal_5A', 'Optimal_5B']):
+for i, txt in enumerate(['Optimal_3', 'Optimal_4a', 'Optimal_4B', 'Optimal_5A', 'Optimal_5B', 'Optimal_6A']):
     ax_A.annotate(txt + '_A', (allocations_A[i][0], allocations_A[i][1]), textcoords="offset points", xytext=(5,-5))
     ax_A.annotate(txt + '_B', (allocations_B[i][0], allocations_B[i][1]), textcoords="offset points", xytext=(5,-5))
 
