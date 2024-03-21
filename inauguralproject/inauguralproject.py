@@ -359,12 +359,63 @@ optimal_p1 = res.x
 # Calculate the optimal allocation for consumer A given the optimal price p1
 x1A_optimal, x2A_optimal = economy.demand_A(optimal_p1)
 
-print("Optimal Price p1:", optimal_p1)
+print("Optimal Price p1: 4B", optimal_p1)
 print("Optimal Allocation for Consumer A: x1A =", x1A_optimal, ", x2A =", x2A_optimal)
 Optimal_4B_A = [x1A_optimal, x2A_optimal]
 Optimal_4B_B = [1 - x1A_optimal, 1 - x2A_optimal]
-print("Optimal Allocation for Consumer B: x1B =", Optimal_4B_B[0], ", x2B =", Optimal_4B_B[1])
-print("Optimal allocation for consumer A: x1A =", Optimal_4B_A[0], ", x2A =", Optimal_4B_A[1])
+print("Optimal Allocation for Consumer B: x1B 4B=", Optimal_4B_B[0], ", x2B =", Optimal_4B_B[1])
+print("Optimal allocation for consumer A: x1A 4B=", Optimal_4B_A[0], ", x2A =", Optimal_4B_A[1])
+
+
+
+
+########## INSERTED ##########
+########## INSERTED ##########
+########## INSERTED ##########
+########## INSERTED ##########
+########## INSERTED ##########
+########## INSERTED ##########
+def negative_utility_A(p1):
+    # Get the demand for B given the price p1
+    x1B, x2B = economy.demand_B(p1)
+    
+    # Calculate the remaining goods for A after B's consumption
+    x1A_remaining = 1 - x1B
+    x2A_remaining = 1 - x2B
+    
+    # The utility function for A expects positive consumption, if negative we return a large number
+    if x1A_remaining < 0 or x2A_remaining < 0:
+        return 1e6  # A large number to indicate a bad utility (not feasible)
+    
+    # Get the utility for A with the remaining goods
+    utility_A = economy.utility_A(x1A_remaining, x2A_remaining)
+    
+    # We return the negative utility because we want to maximize the utility,
+    # but the optimizer minimizes the function
+    return -utility_A
+
+# Find the price p1 that maximizes utility for A (minimizes the negative utility)
+res = minimize_scalar(negative_utility_A, bounds=(0.00000, 15), method='bounded')
+
+# The optimal price p1
+optimal_p1 = res.x
+optimal_p1, -res.fun  # We negate the fun value to get the actual utility
+
+print('4B NEWWWWW',optimal_p1, -res.fun)
+
+# Get the optimal values
+Optimal_4B_A = economy.demand_A(optimal_p1)
+Optimal_4B_B = economy.demand_B(optimal_p1)
+
+# Convert the tuples in the lists to single lists
+Optimal_4B_A = [item for sublist in Optimal_4B_A for item in sublist]
+Optimal_4B_B = [item for sublist in Optimal_4B_B for item in sublist]
+
+
+
+
+
+
 ########## 5a ##########
 ########## 5a ##########
 ########## 5a ##########
