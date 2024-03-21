@@ -511,45 +511,36 @@ print("x2B:", optimal_allocation[3])
 ########## 6b ##########
 ########## 6b ##########
 ########## 6b ##########
+import matplotlib.pyplot as plt
 
-# Define the allocations
-Optimal_3_A
-Optimal_3_B
+# Coordinates of optimal points for consumer A
+Optimal_3_A = (0.3725490199048352, 0.7037037022908529)
+Optimal_4a_A = (0.33274596182085164, 1)
+Optimal_4B_A = (0.3333331886798263, 1.000001735845851)
+Optimal_5A_A = (0.619316843345112, 0.6408888888888888)
+Optimal_5B_A = (0.5757450571871308, 0.8444377880991675)
 
-Optimal_4a_A
-Optimal_4a_B
-
-Optimal_4B_A
-Optimal_4B_B
-
-Optimal_5A_A
-Optimal_5A_B
-
-Optimal_5B_A
-Optimal_5B_B
-
-allocations_A = np.array([Optimal_3_A, Optimal_4a_A, Optimal_4B_A, Optimal_5A_A, Optimal_5B_A])
-allocations_B = np.array([Optimal_3_B, Optimal_4a_B, Optimal_4B_B, Optimal_5A_B, Optimal_5B_B])
-
-print('6bbbbbbbbb', allocations_A, allocations_B)
-
-# Plot the Edgeworth box with the allocations
+# Plot the Edgeworth box with the initial endowments
 fig = plt.figure(frameon=False, figsize=(8, 8), dpi=100)
 ax_A = fig.add_subplot(1, 1, 1)
 
 ax_A.set_xlabel("$x_1^A$")
 ax_A.set_ylabel("$x_2^A$")
 
+# Plot initial endowments
+ax_A.plot(par.w1A, par.w2A, 'r*', markersize=10, label='Initial Endowment A')
 
-ax_A.scatter(allocations_A[:, 0], allocations_A[:, 1], label='Allocations A', color='blue', zorder=5)
-ax_A.scatter(allocations_B[:, 0], allocations_B[:, 1], label='Allocations B', color='orange', zorder=5)
+# Plot individual endowments
+ax_A.scatter(par.w1A, par.w2A, marker='s', color='black', label='Endowment')
 
-# Label the points
-for i, txt in enumerate(['Optimal_3', 'Optimal_4a', 'Optimal_4B', 'Optimal_5A', 'Optimal_5B']):
-    ax_A.annotate(txt + '_A', (allocations_A[i, 0], allocations_A[i, 1]), textcoords="offset points", xytext=(5,-5))
-    ax_A.annotate(txt + '_B', (allocations_B[i, 0], allocations_B[i, 1]), textcoords="offset points", xytext=(5,-5))
+# Plot optimal allocations for consumer A
+ax_A.plot(Optimal_3_A[0], Optimal_3_A[1], 'o', markersize=8, label='Allocation with market clearing price')
+ax_A.plot(Optimal_4a_A[0], Optimal_4a_A[1], 'o', markersize=8, label='Allocation when $p_1 \in \mathcal{P}_1$ ')
+ax_A.plot(Optimal_4B_A[0], Optimal_4B_A[1], 'o', markersize=8, label='Allocation for $p_1 > 0$')
+ax_A.plot(Optimal_5A_A[0], Optimal_5A_A[1], 'o', markersize=8, label='Allocation when $(x_1^A, x_2^A) \in \mathcal{C$')
+ax_A.plot(Optimal_5B_A[0], Optimal_5B_A[1], 'o', markersize=8, label='Allocation when no restrictions are imposed')
 
-# Limits
+# Plot the limits
 ax_A.plot([0, 1], [0, 0], lw=2, color='black')
 ax_A.plot([0, 1], [1, 1], lw=2, color='black')
 ax_A.plot([0, 0], [0, 1], lw=2, color='black')
@@ -568,11 +559,17 @@ ax_B.invert_yaxis()
 ax_B.set_xlim([1, 0])
 ax_B.set_ylim([1, 0])
 
+# Show the legend
+ax_A.legend()
+
 # Show the plot
-plt.title('Edgeworth Box')
-plt.legend()
+plt.title('Edgeworth Box with Optimal Allocations')
 plt.grid(True)
 plt.show()
+
+
+
+
 ########## 7 ##########
 ########## 7 ##########
 ########## 7 ##########
