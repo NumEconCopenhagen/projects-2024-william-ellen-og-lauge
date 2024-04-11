@@ -6,9 +6,8 @@ The **results** of the project can be seen from running [dataproject.ipynb](data
 
 We apply the **following datasets**:
 
-%pip install git+https://github.com/alemartinello/dstapi
 from dstapi import DstApi
 
 **Dependencies:** Apart from a standard Anaconda Python 3 installation, the project requires the following installations:
 
-``pip install matplotlib-venn``
+pip install git+https://github.com/alemartinello/dstapi
