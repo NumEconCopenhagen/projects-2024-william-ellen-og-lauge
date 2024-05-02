@@ -6,6 +6,7 @@ import numpy as np
 #import scipy as sp
 from scipy.optimize import minimize
 from scipy.optimize import minimize_scalar
+from scipy.optimize import fsolve
 
 import matplotlib.pyplot as plt
 plt.rcParams.update({"axes.grid":True,"grid.color":"black","grid.alpha":"0.25","grid.linestyle":"--"})
@@ -33,6 +34,15 @@ class ExchangeEconomyClass:
         par = self.par
         utilA = x1A**par.alpha*x2A**(1-par.alpha)
         return utilA
+    
+    def find_market_clearing_price(self):
+        def objective(p1):
+            eps1, eps2 = self.check_market_clearing(p1)
+            return eps1 + eps2
+
+        p1_initial = 1
+        result = fsolve(objective, p1_initial)
+        return result[0]
         
 
     def utility_B(self,x1B,x2B):
@@ -408,9 +418,6 @@ Optimal_4B_A = economy.demand_A(optimal_p1)
 Optimal_4B_B = economy.demand_B(optimal_p1)
 
 # Convert the tuples in the lists to single lists
-# Get the optimal values
-Optimal_4B_A = list(economy.demand_A(optimal_p1))
-Optimal_4B_B = list(economy.demand_B(optimal_p1))
 
 
 
