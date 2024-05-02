@@ -1,7 +1,7 @@
 
+
 # a. imports
 from types import SimpleNamespace
-import pandas as pd
 import numpy as np
 #import scipy as sp
 from scipy.optimize import minimize
@@ -94,6 +94,11 @@ class ExchangeEconomyClass:
 
         return optimal_allocation_A, max_util_A
 
+
+
+# Testing...
+# results = ExchangeEconomyClass().utility_A(1,1)
+# print(results)
     
 # creating an instance of the class
 economy = ExchangeEconomyClass()
@@ -172,9 +177,9 @@ ax_B.set_xlim([1, 0])
 ax_B.set_ylim([1, 0])
 
 # Show the plot
-# plt.title('Edgeworth Box')
-# plt.legend()
-# plt.grid(True)
+plt.title('Edgeworth Box')
+plt.legend()
+plt.grid(True)
 # John = plt.show()
 
 
@@ -205,14 +210,15 @@ for p1 in p1values:
 
 #print(eps1_values, eps2_values)
 # Plot the excess demand functions
+import matplotlib.pyplot as plt
 
-# plt.figure(figsize=(10, 6))
-# plt.plot(p1values, eps1_values, label='eps1')
-# plt.plot(p1values, eps2_values, label='eps2')
-# plt.xlabel('p1 values')
-# plt.ylabel('Excess demand')
-# plt.title('Excess demand for different p1 values')
-# plt.legend()
+plt.figure(figsize=(10, 6))
+plt.plot(p1values, eps1_values, label='eps1')
+plt.plot(p1values, eps2_values, label='eps2')
+plt.xlabel('p1 values')
+plt.ylabel('Excess demand')
+plt.title('Excess demand for different p1 values')
+plt.legend()
 # plt.show()
 
 
@@ -291,8 +297,8 @@ print("Optimal price p1:", optimal_p1)
 Optimal_4a_A = optimal_allocation_A
 Optimal_4a_B = [1 - optimal_allocation_A[0], 1 - optimal_allocation_A[1]]
 
-# Another interpretation    
-# The part below is remarked out, because it gives the wrong result. 
+#Another interpretation    
+#TODO The part below is remarked out, because it gives the wrong result. 
 # utility_A_values = []
 # optimal_x1A = None
 # optimal_x2A = None
@@ -402,8 +408,13 @@ Optimal_4B_A = economy.demand_A(optimal_p1)
 Optimal_4B_B = economy.demand_B(optimal_p1)
 
 # Convert the tuples in the lists to single lists
+# Get the optimal values
 Optimal_4B_A = list(economy.demand_A(optimal_p1))
 Optimal_4B_B = list(economy.demand_B(optimal_p1))
+
+
+
+
 
 
 ########## 5a ##########
@@ -637,13 +648,13 @@ ax_B.set_xlim([1, 0])
 ax_B.set_ylim([1, 0])
 
 # Show the legend
-# ax_A.legend()
+ax_A.legend()
 
 # Show the plot
-# plt.title('Edgeworth Box')
-# #plt.legend()
-# plt.grid(True)
-# plt.show()
+plt.title('Edgeworth Box')
+#plt.legend()
+plt.grid(True)
+plt.show()
 
 # Evaluate each allocation and store the utility values
 utility_values_A = [economy.utility_A(x1A, x2A) for x1A, x2A in allocations_A]
@@ -653,6 +664,8 @@ utility_values_B = [economy.utility_B(x1B, x2B) for x1B, x2B in allocations_B]
 total_utilities = [utilA + utilB for utilA, utilB in zip(utility_values_A, utility_values_B)]
 
 # Create a table with individual utilities and total utility
+import pandas as pd
+
 utility_table = pd.DataFrame({
     'Allocation': range(1, len(allocations_A) + 1),
     'Utility A': utility_values_A,
@@ -668,6 +681,7 @@ print(utility_table)
 ########## 7 ##########
 ########## 7 ##########
 
+import matplotlib.pyplot as plt
 plt.rcParams.update({"axes.grid":True,"grid.color":"black","grid.alpha":"0.25","grid.linestyle":"--"})
 plt.rcParams.update({'font.size': 14})
 
@@ -718,9 +732,9 @@ for economy.par.w1A, economy.par.w2A in zip(w1A_values, w2A_values):
     plt.scatter(x1A, x2A, color='blue', alpha=0.5)
     plt.scatter(x1B, x2B, color='red', alpha=0.5)
 
-# plt.legend()
-# plt.grid(True)
-# plt.gca().set_aspect('equal', adjustable='box')
+plt.legend()
+plt.grid(True)
+plt.gca().set_aspect('equal', adjustable='box')
 # plt.show()
 
 
