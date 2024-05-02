@@ -602,13 +602,28 @@ Optimal_5B_B
 Optimal_6A_A
 Optimal_6A_B
 
-allocations_A = [Optimal_3_A, Optimal_4a_A, Optimal_4B_A, Optimal_5A_A, Optimal_5B_A, Optimal_6A_A]
-allocations_B = [Optimal_3_B, Optimal_4a_B, Optimal_4B_B, Optimal_5A_B, Optimal_5B_B, Optimal_6A_B]
 
-
+def get_allocations(): 
+    allocations_A = [Optimal_3_A, Optimal_4a_A, Optimal_4B_A, Optimal_5A_A, Optimal_5B_A, Optimal_6A_A]
+    allocations_B = [Optimal_3_B, Optimal_4a_B, Optimal_4B_B, Optimal_5A_B, Optimal_5B_B, Optimal_6A_B]
+ # Add all your B allocations
+    return allocations_A, allocations_B
 # Plot the Edgeworth box with the initial endowments
 fig = plt.figure(frameon=False, figsize=(8, 8), dpi=100)
 ax_A = fig.add_subplot(1, 1, 1)
+
+def get_utility_tables(economy):
+    allocations_A, allocations_B = get_allocations()
+    utility_values_A = [economy.utility_A(x1A, x2A) for x1A, x2A in allocations_A]
+    utility_values_B = [economy.utility_B(x1B, x2B) for x1B, x2B in allocations_B]
+    total_utilities = [utilA + utilB for utilA, utilB in zip(utility_values_A, utility_values_B)]
+    utility_table = pd.DataFrame({
+        'Allocation': range(1, len(allocations_A) + 1),
+        'Utility A': utility_values_A,
+        'Utility B': utility_values_B,
+        'Total Utility': total_utilities
+    })
+    return utility_table
 
 ax_A.set_xlabel("$x_1^A$")
 ax_A.set_ylabel("$x_2^A$")
