@@ -176,9 +176,9 @@ ax_B.set_xlim([1, 0])
 ax_B.set_ylim([1, 0])
 
 # Show the plot
-plt.title('Edgeworth Box')
-plt.legend()
-plt.grid(True)
+# plt.title('Edgeworth Box')
+# plt.legend()
+# plt.grid(True)
 # John = plt.show()
 
 
@@ -211,13 +211,13 @@ for p1 in p1values:
 # Plot the excess demand functions
 import matplotlib.pyplot as plt
 
-plt.figure(figsize=(10, 6))
-plt.plot(p1values, eps1_values, label='eps1')
-plt.plot(p1values, eps2_values, label='eps2')
-plt.xlabel('p1 values')
-plt.ylabel('Excess demand')
-plt.title('Excess demand for different p1 values')
-plt.legend()
+# plt.figure(figsize=(10, 6))
+# plt.plot(p1values, eps1_values, label='eps1')
+# plt.plot(p1values, eps2_values, label='eps2')
+# plt.xlabel('p1 values')
+# plt.ylabel('Excess demand')
+# plt.title('Excess demand for different p1 values')
+# plt.legend()
 # plt.show()
 
 
@@ -296,8 +296,8 @@ print("Optimal price p1:", optimal_p1)
 Optimal_4a_A = optimal_allocation_A
 Optimal_4a_B = [1 - optimal_allocation_A[0], 1 - optimal_allocation_A[1]]
 
-#Another interpretation    
-#TODO The part below is remarked out, because it gives the wrong result. 
+# Another interpretation    
+# The part below is remarked out, because it gives the wrong result. 
 # utility_A_values = []
 # optimal_x1A = None
 # optimal_x2A = None
@@ -407,12 +407,8 @@ Optimal_4B_A = economy.demand_A(optimal_p1)
 Optimal_4B_B = economy.demand_B(optimal_p1)
 
 # Convert the tuples in the lists to single lists
-Optimal_4B_A = [item for sublist in Optimal_4B_A for item in sublist]
-Optimal_4B_B = [item for sublist in Optimal_4B_B for item in sublist]
-
-
-
-
+Optimal_4B_A = list(economy.demand_A(optimal_p1))
+Optimal_4B_B = list(economy.demand_B(optimal_p1))
 
 
 ########## 5a ##########
@@ -646,13 +642,13 @@ ax_B.set_xlim([1, 0])
 ax_B.set_ylim([1, 0])
 
 # Show the legend
-ax_A.legend()
+# ax_A.legend()
 
 # Show the plot
-plt.title('Edgeworth Box')
-#plt.legend()
-plt.grid(True)
-plt.show()
+# plt.title('Edgeworth Box')
+# #plt.legend()
+# plt.grid(True)
+# plt.show()
 
 # Evaluate each allocation and store the utility values
 utility_values_A = [economy.utility_A(x1A, x2A) for x1A, x2A in allocations_A]
@@ -730,9 +726,9 @@ for economy.par.w1A, economy.par.w2A in zip(w1A_values, w2A_values):
     plt.scatter(x1A, x2A, color='blue', alpha=0.5)
     plt.scatter(x1B, x2B, color='red', alpha=0.5)
 
-plt.legend()
-plt.grid(True)
-plt.gca().set_aspect('equal', adjustable='box')
+# plt.legend()
+# plt.grid(True)
+# plt.gca().set_aspect('equal', adjustable='box')
 # plt.show()
 
 
