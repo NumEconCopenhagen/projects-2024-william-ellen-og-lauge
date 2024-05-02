@@ -145,7 +145,7 @@ for x1A in x1A_values:
             # Check if both utilities are at least as high as the initial endowment utilities
             if utility_A >= initial_utility_A and utility_B >= initial_utility_B:
                 pareto_efficient_allocations.append((x1A, x2A))
-
+ 
 # Convert the list of allocations to a NumPy array for plotting
 pareto_efficient_allocations = np.array(pareto_efficient_allocations)
 
