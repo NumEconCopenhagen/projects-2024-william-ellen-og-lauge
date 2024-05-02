@@ -1,6 +1,7 @@
 
 # a. imports
 from types import SimpleNamespace
+import pandas as pd
 import numpy as np
 #import scipy as sp
 from scipy.optimize import minimize
@@ -93,11 +94,6 @@ class ExchangeEconomyClass:
 
         return optimal_allocation_A, max_util_A
 
-
-
-# Testing...
-# results = ExchangeEconomyClass().utility_A(1,1)
-# print(results)
     
 # creating an instance of the class
 economy = ExchangeEconomyClass()
@@ -209,7 +205,6 @@ for p1 in p1values:
 
 #print(eps1_values, eps2_values)
 # Plot the excess demand functions
-import matplotlib.pyplot as plt
 
 # plt.figure(figsize=(10, 6))
 # plt.plot(p1values, eps1_values, label='eps1')
@@ -658,8 +653,6 @@ utility_values_B = [economy.utility_B(x1B, x2B) for x1B, x2B in allocations_B]
 total_utilities = [utilA + utilB for utilA, utilB in zip(utility_values_A, utility_values_B)]
 
 # Create a table with individual utilities and total utility
-import pandas as pd
-
 utility_table = pd.DataFrame({
     'Allocation': range(1, len(allocations_A) + 1),
     'Utility A': utility_values_A,
@@ -675,7 +668,6 @@ print(utility_table)
 ########## 7 ##########
 ########## 7 ##########
 
-import matplotlib.pyplot as plt
 plt.rcParams.update({"axes.grid":True,"grid.color":"black","grid.alpha":"0.25","grid.linestyle":"--"})
 plt.rcParams.update({'font.size': 14})
 
