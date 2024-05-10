@@ -103,12 +103,6 @@ class ExchangeEconomyClass:
                 optimal_allocation_A = (x1A, x2A)
 
         return optimal_allocation_A, max_util_A
-
-
-
-# Testing...
-# results = ExchangeEconomyClass().utility_A(1,1)
-# print(results)
     
 # creating an instance of the class
 economy = ExchangeEconomyClass()
@@ -119,9 +113,6 @@ initial_utility_A = economy.utility_A(par.w1A, par.w2A)
 initial_utility_B = economy.utility_B(par.w1B, par.w2B)
 
 initial_utility_A, initial_utility_B
-
-
-# Assuming you have defined 'economy' and 'initial_utility_A', 'initial_utility_B' somewhere before
 
 # Parameters
 N = 75
@@ -628,74 +619,6 @@ def get_utility_tables(economy):
 ax_A.set_xlabel("$x_1^A$")
 ax_A.set_ylabel("$x_2^A$")
 
-# Inside your plotting section
-# Replace the ax_A.scatter(...) lines with the following:
-for alloc in allocations_A:
-    if len(alloc) == 2:
-        ax_A.scatter(alloc[0], alloc[1], label='Allocations A', color='blue', zorder=5)
-    else:
-        print(f"Skipping an element in allocations_A: {alloc} (invalid length)")
-
-for alloc in allocations_B:
-    if len(alloc) == 2:
-        ax_A.scatter(alloc[0], alloc[1], label='Allocations B', color='orange', zorder=5)
-    else:
-        print(f"Skipping an element in allocations_B: {alloc} (invalid length)")
-
-
-# And replace the ax_A.annotate(...) lines with the following:
-for i, txt in enumerate(['Optimal_3', 'Optimal_4a', 'Optimal_4B', 'Optimal_5A', 'Optimal_5B', 'Optimal_6A']):
-    ax_A.annotate(txt + '_A', (allocations_A[i][0], allocations_A[i][1]), textcoords="offset points", xytext=(5,-5))
-    ax_A.annotate(txt + '_B', (allocations_B[i][0], allocations_B[i][1]), textcoords="offset points", xytext=(5,-5))
-
-
-
-# Plot the limits
-ax_A.plot([0, 1], [0, 0], lw=2, color='black')
-ax_A.plot([0, 1], [1, 1], lw=2, color='black')
-ax_A.plot([0, 0], [0, 1], lw=2, color='black')
-ax_A.plot([1, 1], [0, 1], lw=2, color='black')
-
-ax_A.set_xlim([0, 1])
-ax_A.set_ylim([0, 1])
-
-# Design for B
-temp = ax_A.twinx()
-temp.set_ylabel("$x_2^B$")
-ax_B = temp.twiny()
-ax_B.set_xlabel("$x_1^B$")
-ax_B.invert_xaxis()
-ax_B.invert_yaxis()
-ax_B.set_xlim([1, 0])
-ax_B.set_ylim([1, 0])
-
-# Show the legend
-ax_A.legend()
-
-# Show the plot
-plt.title('Edgeworth Box')
-#plt.legend()
-plt.grid(True)
-plt.show()
-
-# Evaluate each allocation and store the utility values
-utility_values_A = [economy.utility_A(x1A, x2A) for x1A, x2A in allocations_A]
-utility_values_B = [economy.utility_B(x1B, x2B) for x1B, x2B in allocations_B]
-
-# Calculate the total utility for each allocation
-total_utilities = [utilA + utilB for utilA, utilB in zip(utility_values_A, utility_values_B)]
-
-# Create a table with individual utilities and total utility
-import pandas as pd
-
-utility_table = pd.DataFrame({
-    'Allocation': range(1, len(allocations_A) + 1),
-    'Utility A': utility_values_A,
-    'Utility B': utility_values_B,
-    'Total Utility': total_utilities
-})
-
-print(utility_table)
 
 ########## 7 ##########
 ########## 7 ##########
