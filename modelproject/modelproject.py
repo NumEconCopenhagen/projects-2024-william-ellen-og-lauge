@@ -17,15 +17,14 @@ def plot_ad_as(s=0, tau=0, g=0, y_bar=100, pi_star=2, alpha1=1, alpha2=1, alpha3
     # Derive the AD and AS curves
     alpha = alpha2 * h / (1 + alpha2 * b)
     ad_curve = ad(y_range, pi_star, pi_star, alpha, alpha1, alpha2, alpha3, b, g, g, tau, tau_bar, h, y_bar)
-    as_curve_0 = as_curve(y_range, pi_star, pi_star, gamma, 0, y_bar)
     as_curve_s = as_curve(y_range, pi_star, pi_star, gamma, s, y_bar)
     as_curve_tau = as_curve(y_range, pi_star, pi_star, gamma, tau, y_bar)
     as_curve_g = as_curve(y_range, pi_star, pi_star, gamma, g, y_bar)
 
     # Plotting
     plt.plot(y_range, ad_curve, label='AD')
-    plt.plot(y_range, as_curve_0, label='AS (s=0)', color='black')
-    plt.plot(y_range, as_curve_s, label='AS (s={:.2f})'.format(s), color='red')
+    if s != 0:
+        plt.plot(y_range, as_curve_s, label='AS (s={:.2f})'.format(s), color='red')
     plt.plot(y_range, as_curve_tau, label='AS (tau={:.2f})'.format(tau), color='blue')
     plt.plot(y_range, as_curve_g, label='AS (g={:.2f})'.format(g), color='green')
 
