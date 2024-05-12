@@ -5,13 +5,7 @@ import matplotlib.pyplot as plt
 from types import SimpleNamespace
 from ipywidgets import interact, FloatSlider
 
-
-
-
-
-##TODO IMPORT FROM OTHER STUDENT
-
-
+# AS/AD model for a closed economy in the short run
 class AS_AD_model:
     def __init__(self):
         self.y, self.pi, self.g, self.b, self.alpha_1, self.alpha_2, self.alpha_3, self.h, self.s, self.y_bar, self.pi_star, self.tau, self.tau_bar = sm.symbols(
