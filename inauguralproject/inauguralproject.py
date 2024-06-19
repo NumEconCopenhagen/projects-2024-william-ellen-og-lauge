@@ -103,34 +103,3 @@ class ExchangeEconomyClass:
 
         return optimal_allocation_A, max_util_A
     
-
-########## 5a ##########
-########## 5a ##########
-########## 5a ##########
-########## 5a ##########
-########## 5a ##########
-
-def results(economy):
-    # Utility at endowment
-    endowment_utility_A = economy.utility_A(economy.par.w1A, economy.par.w2A)
-    endowment_utility_B = economy.utility_B(economy.par.w1B, economy.par.w2B)
-    # Endowments
-    endow_A = (economy.par.w1A, economy.par.w2A)
-    endow_B = (economy.par.w1B, economy.par.w2B)
-    # Optimal allocation
-    optimal_allocation_A, max_util_A = economy.optimize_allocation()
-    # We assume the final allocation for B is whatever is left after A's allocation
-    final_allocation_B = (1-optimal_allocation_A[0], 1-optimal_allocation_A[1])
-    # Utility for B at the final allocation
-    final_utility_B = economy.utility_B(final_allocation_B[0], final_allocation_B[1])
-    
-    # Print results
-    print(f"Utility for A at A's endowment: {endowment_utility_A}")
-    print(f"Utility for B at B's endowment: {endowment_utility_B}")
-    print(f"Endowment for A: {endow_A}")
-    print(f"Endowment for B: {endow_B}")
-    print(f"Optimal allocation for A: {optimal_allocation_A}")
-    print(f"Max utility for A at optimal allocation: {max_util_A}")
-    print(f"Final allocation for B: {final_allocation_B}")
-    print(f"Utility for B at final allocation: {final_utility_B}")
-    return optimal_allocation_A, max_util_A
