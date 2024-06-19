@@ -49,9 +49,9 @@ def plot_supply_shock(s=0, y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1
     as_curve_0 = model.as_curve(y_range, pi_star, pi_star, gamma, 0, y_bar, h)
     as_curve_1 = model.as_curve(y_range, pi_star, pi_star, gamma, s, y_bar, h)
 
-    plt.plot(y_range, ad_curve, label='AD')
-    plt.plot(y_range, as_curve_0, label='AS (s=0)', color='black')
-    plt.plot(y_range, as_curve_1, label='AS (s={:.2f})'.format(s), color='red')
+    plt.plot(y_range, ad_curve, label='AD', color='blue')  # AD curve in blue
+    plt.plot(y_range, as_curve_0, label='AS (s=0)', color='red')  # AS curve without shock in red
+    plt.plot(y_range, as_curve_1, label='AS (s={:.2f})'.format(s), color='green')  # AS curve with shock in green
     plt.ylim([-4, 4])
 
     plt.xlabel('Output')
@@ -65,9 +65,9 @@ def plot_demand_shock(s=0, y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1
     ad_curve_1 = model.ad(y_range, y_bar, pi_star, pi_star, model.alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar, h)
     as_curve_res = model.as_curve(y_range, pi_star, pi_star, gamma, s, y_bar, h)
 
-    plt.plot(y_range, ad_curve_0, label='AD (z=0)', color='black')
-    plt.plot(y_range, ad_curve_1, label='AD', color='blue')
-    plt.plot(y_range, as_curve_res, label='AS', color='red')
+    plt.plot(y_range, ad_curve_0, label='AD (z=0)', color='blue')  # AD curve without shock in blue
+    plt.plot(y_range, ad_curve_1, label='AD', color='orange')  # AD curve with shock in orange
+    plt.plot(y_range, as_curve_res, label='AS', color='red')  # AS curve in red
     plt.ylim([-4, 4])
 
     plt.xlabel('Output')
@@ -79,7 +79,9 @@ model = AS_AD_model()
 
 # Example usage
 plot_supply_shock(s=-0.5)
+plt.title('Supply Shock (AS increases)')
 plt.show()
 
 plot_demand_shock(s=-0.5)
+plt.title('Demand Shock (AD decreases)')
 plt.show()
