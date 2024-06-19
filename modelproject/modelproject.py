@@ -1,7 +1,5 @@
-import sympy as sm
 import numpy as np
 import matplotlib.pyplot as plt
-from types import SimpleNamespace
 
 class AS_AD_model:
     def __init__(self):
@@ -45,6 +43,8 @@ class AS_AD_model:
 def plot_supply_shock(s=0, y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1, b=1, g=1, g_bar=1, tau=1/2, tau_bar=1/2, h=1, gamma=0.5):
     y_range = np.linspace(y_bar - 5, y_bar + 5, 100)
 
+    model = AS_AD_model()
+
     ad_curve = model.ad(y_range, y_bar, pi_star, pi_star, model.alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar, h)
     as_curve_0 = model.as_curve(y_range, pi_star, pi_star, gamma, 0, y_bar)
     as_curve_1 = model.as_curve(y_range, pi_star, pi_star, gamma, s, y_bar)
@@ -54,12 +54,16 @@ def plot_supply_shock(s=0, y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1
     plt.plot(y_range, as_curve_1, label='AS (s={:.2f})'.format(s), color='green')  # AS curve with shock in green
     plt.ylim([-4, 4])
 
-    plt.xlabel('Output')
-    plt.ylabel('Inflation (in percentage points)')
+    plt.xlabel('Output (y)')
+    plt.ylabel('Inflation (pi)')
+    plt.title('AS-AD Model: Supply Shock (AS increases)')
     plt.legend()
+    plt.show()
 
 def plot_demand_shock(s=0, y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1, b=1, g=1, g_bar=1, tau=1/2, tau_bar=1/2, h=1, gamma=0.5):
     y_range = np.linspace(y_bar - 5, y_bar + 5, 100)
+
+    model = AS_AD_model()
 
     ad_curve_0 = model.ad(y_range, y_bar, pi_star, pi_star, 1, 1, 1, 1, 1, 1, 1, 1/2, 1/2, h)
     ad_curve_1 = model.ad(y_range, y_bar, pi_star, pi_star, model.alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar, h)
@@ -70,19 +74,12 @@ def plot_demand_shock(s=0, y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1
     plt.plot(y_range, as_curve_res, label='AS', color='red')  # AS curve in red
     plt.ylim([-4, 4])
 
-    plt.xlabel('Output')
-    plt.ylabel('Inflation (in percentage points)')
+    plt.xlabel('Output (y)')
+    plt.ylabel('Inflation (pi)')
+    plt.title('AS-AD Model: Demand Shock (AD decreases)')
     plt.legend()
-
-# Instantiate the AS_AD_model class
-model = AS_AD_model()
+    plt.show()
 
 # Example usage
 plot_supply_shock(s=-0.5)
-plt.title('Supply Shock (AS increases)')
-plt.show()
-
 plot_demand_shock(s=-0.5)
-plt.title('Demand Shock (AD decreases)')
-plt.show()
-
