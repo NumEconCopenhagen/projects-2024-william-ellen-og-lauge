@@ -85,3 +85,4 @@ plt.show()
 plot_demand_shock(s=-0.5)
 plt.title('Demand Shock (AD decreases)')
 plt.show()
+
