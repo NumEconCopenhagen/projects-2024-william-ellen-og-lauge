@@ -177,5 +177,4 @@ def plot_population_pyramid1(datapop_api):
     # Displaying the slider and attach the update function
     widgets.interactive(update_plot, year=year_slider)
 
-# Function to call the plot in ipynp-file
 
