@@ -171,3 +171,48 @@ def plot_herkomst_groups(datapop_api, selected_years):
     plt.legend(bbox_to_anchor=(1.05, 0.6), loc='upper left', ncol=1)
 
     plt.show()
+
+    # Creating the interactive population pyramid plots
+
+def update_plot(year):
+    # Filtering the DataFrame for the selected year
+    df_year = datapop_api[datapop_api["TID"] == year]
+    
+    # Grouping by gender and age, then summing the population count
+    age_pyramid_data = df_year.groupby(["KØN", "ALDER"])["INDHOLD"].sum().unstack("KØN")
+    
+    # Making women's population negative for plotting like before
+    age_pyramid_data['Women'] = -age_pyramid_data['Women']
+
+    # Clearing the previous figure and create a new one
+    plt.clf()
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    # Plotting the data
+    ax.barh(age_pyramid_data.index, age_pyramid_data['Men'], color='blue', label='Men')
+    ax.barh(age_pyramid_data.index, age_pyramid_data['Women'], color='green', label='Women')
+
+    # Setting labels and title
+    ax.set_xlabel('Population Count')
+    ax.set_ylabel('Age')
+    ax.set_title(f'Population Pyramid for {year}')
+    ax.legend()
+
+
+    ax.set_ylim(0, age_pyramid_data.index.max())
+
+    # Change y-axis to show only labels for every 5 years.
+    # Find the max age to set as the limit for the y-axis ticks.
+    # max_age = age_pyramid_data.index.max() + (5 - age_pyramid_data.index.max() % 5)  # Round up to the nearest multiple of 5
+    ax.set_yticks(np.arange(0, 101, 5))
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))  # Ensure that only integer ticks are shown
+
+    # Setting the x-axis to show positive values for both sides
+    ticks = ax.get_xticks()
+    ax.set_xticklabels([int(abs(tick)) for tick in ticks])
+
+    # Showing grid
+    ax.grid(True)
+
+    # Displaying the plot
+    plt.show()
