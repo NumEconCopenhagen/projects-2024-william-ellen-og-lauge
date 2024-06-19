@@ -162,7 +162,7 @@ def plot_herkomst_groups(datapop_api, selected_years):
 
     plt.title('Total Amount of People by HERKOMST')
     plt.xlabel('Year')
-    plt.ylabel('Total Amount of People in millions')
+    plt.ylabel('Total Amount of People (Millions)')
 
     # Format y-axis to display in millions with one decimal place
     plt.gca().yaxis.set_major_formatter(mtick.FuncFormatter(lambda x, p: f'{x/1e6:.1f}'))
