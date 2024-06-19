@@ -3,19 +3,20 @@ import matplotlib.pyplot as plt
 
 class AS_AD_model:
     def __init__(self):
-        self.y, self.pi, self.g, self.b, self.alpha_1, self.alpha_2, self.alpha_3, self.h, self.s, self.y_bar, self.pi_star, self.tau, self.tau_bar = sm.symbols(
+        # Parameters and symbols
+        self.y, self.pi, self.g, self.b, self.alpha_1, self.alpha_2, self.alpha_3, self.h, self.s, self.y_bar, self.pi_star, self.tau, self.tau_bar = symbols(
             'y pi g b alpha_1 alpha_2 alpha_3 h s y_bar pi_star tau tau_bar')
 
         # Define the AD and AS curves using sympy expressions
         z = self.alpha_1 / (1 + self.alpha_2 * self.b) * (self.g - self.y_bar) - self.alpha_3 / (1 + self.alpha_2 * self.b) * (self.tau - self.tau_bar)
         self.alpha = self.alpha_2 * self.h / (1 + self.alpha_2 * self.b)
         self.AD = self.y - self.y_bar - z - self.alpha * (self.pi - self.pi_star)
-        self.gamma = sm.symbols('gamma')
+        self.gamma = symbols('gamma')
         self.AS = self.pi - self.pi_star - self.gamma * (self.y - self.y_bar) - self.s
 
         # Solve the steady state equation
-        self.steady_state_eq = sm.solve(sm.Eq(self.AD, self.AS), self.y)[0]
-        self.ss_func = sm.lambdify(
+        self.steady_state_eq = solve(Eq(self.AD, self.AS), self.y)[0]
+        self.ss_func = lambdify(
             (self.pi, self.g, self.b, self.alpha_1, self.alpha_2, self.alpha_3, self.h, self.s, self.y_bar, self.pi_star, self.gamma, self.tau, self.tau_bar),
             self.steady_state_eq)
 
