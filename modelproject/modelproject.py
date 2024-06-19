@@ -11,7 +11,7 @@ class AS_AD_model:
         # Define the AD and AS curves using sympy expressions
         z = self.alpha_1 / (1 + self.alpha_2 * self.b) * (self.g - self.y_bar) - self.alpha_3 / (1 + self.alpha_2 * self.b) * (self.tau - self.tau_bar)
         self.alpha = self.alpha_2 * self.h / (1 + self.alpha_2 * self.b)
-        self.AD = self.y - self.y_bar - z + self.alpha * (self.pi - self.pi_star)
+        self.AD = self.y - self.y_bar - z - self.alpha * (self.pi - self.pi_star)
         self.gamma = sm.symbols('gamma')
         self.AS = self.pi - self.pi_star - self.gamma * (self.y - self.y_bar) - self.s
 
@@ -26,9 +26,9 @@ class AS_AD_model:
 
     def ad(self, y, y_bar, pi, pi_star, alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar, h):
         z = alpha_1 / (1 + alpha_2 * b) * (g - g_bar) - alpha_3 / (1 + alpha_2 * b) * (tau - tau_bar)
-        return y - y_bar - z + alpha * (pi - pi_star)
+        return y - y_bar - z - alpha * (pi - pi_star)
 
-    def as_curve(self, y, pi, pi_star, gamma, s, y_bar, h):
+    def as_curve(self, y, pi, pi_star, gamma, s, y_bar):
         return pi - pi_star - gamma * (y - y_bar) - s
 
     def analyze_policy_intervention(self, interest_rate):
@@ -46,8 +46,8 @@ def plot_supply_shock(s=0, y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1
     y_range = np.linspace(y_bar - 5, y_bar + 5, 100)
 
     ad_curve = model.ad(y_range, y_bar, pi_star, pi_star, model.alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar, h)
-    as_curve_0 = model.as_curve(y_range, pi_star, pi_star, gamma, 0, y_bar, h)
-    as_curve_1 = model.as_curve(y_range, pi_star, pi_star, gamma, s, y_bar, h)
+    as_curve_0 = model.as_curve(y_range, pi_star, pi_star, gamma, 0, y_bar)
+    as_curve_1 = model.as_curve(y_range, pi_star, pi_star, gamma, s, y_bar)
 
     plt.plot(y_range, ad_curve, label='AD', color='blue')  # AD curve in blue
     plt.plot(y_range, as_curve_0, label='AS (s=0)', color='red')  # AS curve without shock in red
@@ -63,7 +63,7 @@ def plot_demand_shock(s=0, y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1
 
     ad_curve_0 = model.ad(y_range, y_bar, pi_star, pi_star, 1, 1, 1, 1, 1, 1, 1, 1/2, 1/2, h)
     ad_curve_1 = model.ad(y_range, y_bar, pi_star, pi_star, model.alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar, h)
-    as_curve_res = model.as_curve(y_range, pi_star, pi_star, gamma, s, y_bar, h)
+    as_curve_res = model.as_curve(y_range, pi_star, pi_star, gamma, s, y_bar)
 
     plt.plot(y_range, ad_curve_0, label='AD (z=0)', color='blue')  # AD curve without shock in blue
     plt.plot(y_range, ad_curve_1, label='AD', color='orange')  # AD curve with shock in orange
