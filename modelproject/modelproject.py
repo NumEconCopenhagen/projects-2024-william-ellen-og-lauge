@@ -1,11 +1,8 @@
 import sympy as sm
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from types import SimpleNamespace
-from ipywidgets import interact, FloatSlider
 
-# AS/AD model for a closed economy in the short run
 class AS_AD_model:
     def __init__(self):
         self.y, self.pi, self.g, self.b, self.alpha_1, self.alpha_2, self.alpha_3, self.h, self.s, self.y_bar, self.pi_star, self.tau, self.tau_bar = sm.symbols(
@@ -27,52 +24,31 @@ class AS_AD_model:
         # Set parameters
         self.par = SimpleNamespace(y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1, b=1, g=1, g_bar=1, h=1, gamma=0.5, tau=0.5, tau_bar=0.5, s=0)
 
-    def ad(self, y, y_bar, pi, pi_star, alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, h, tau, tau_bar):
-        #Defining the AD-curve equation
+    def ad(self, y, y_bar, pi, pi_star, alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar):
         z = alpha_1 / (1 + alpha_2 * b) * (g - g_bar) - alpha_3 / (1 + alpha_2 * b) * (tau - tau_bar)
         return y - y_bar - z + alpha * (pi - pi_star)
 
-    def as_curve(self, y, pi, pi_1, gamma, s):
-        #Defining the AS-curve equation
-        return pi - pi_1 - gamma * (y - self.y_bar) - s
+    def as_curve(self, y, pi, pi_star, gamma, s, y_bar):
+        return pi - pi_star - gamma * (y - y_bar) - s
 
     def analyze_policy_intervention(self, interest_rate):
-        #Assuming no supply shocks 
-        self.s = 0
-
-        #Calculating steady state before policy intervention
-        steady_state_before = self.ss_func(self.par.pi_star, self.par.g, self.par.b, self.par.alpha_1, self.par.alpha_2, self.par.alpha_3, self.par.h, self.s,
-                           self.par.y_bar, self.par.pi_star, self.par.gamma, self.par.tau, self.par.tau_bar)
-
-        #Applying the policy intervention (decrease in interest rate)
         self.s = interest_rate
 
-        #Calculating steady state after policy intervention
+        steady_state_before = self.ss_func(self.par.pi_star, self.par.g, self.par.b, self.par.alpha_1, self.par.alpha_2, self.par.alpha_3, self.par.h, 0,
+                                           self.par.y_bar, self.par.pi_star, self.par.gamma, self.par.tau, self.par.tau_bar)
+
         steady_state_after = self.ss_func(self.par.pi_star, self.par.g, self.par.b, self.par.alpha_1, self.par.alpha_2, self.par.alpha_3, self.par.h, self.s,
-                           self.par.y_bar, self.par.pi_star, self.par.gamma, self.par.tau, self.par.tau_bar)
+                                          self.par.y_bar, self.par.pi_star, self.par.gamma, self.par.tau, self.par.tau_bar)
 
         return steady_state_before, steady_state_after
 
-    
-    
-def ad(y, pi, pi_star, alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar, h, y_bar):
-    z = alpha_1 / (1 + alpha_2 * b) * (g - g_bar) - alpha_3 / (1 + alpha_2 * b) * (tau - tau_bar)
-    return y - y_bar - z + alpha * (pi - pi_star)
-
-def as_curve(y, pi, pi_1, gamma, s, y_bar):
-    return pi - pi_1 - gamma * (y - y_bar) - s
-
 def plot_supply_shock(s=0, y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1, b=1, g=1, g_bar=1, tau=1/2, tau_bar=1/2, h=1, gamma=0.5):
-    # Create a range of output levels
     y_range = np.linspace(y_bar - 5, y_bar + 5, 100)
 
-    # Derive the AD and AS curves
-    alpha = alpha_2 * h / (1 + alpha_2 * b)
-    ad_curve = ad(y_range, pi_star, pi_star, alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar, h, y_bar)
-    as_curve_0 = as_curve(y_range, pi_star, pi_star, gamma, 0, y_bar)
-    as_curve_1 = as_curve(y_range, pi_star, pi_star, gamma, s, y_bar)
+    ad_curve = model.ad(y_range, y_bar, pi_star, pi_star, model.alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar)
+    as_curve_0 = model.as_curve(y_range, pi_star, pi_star, gamma, 0, y_bar)
+    as_curve_1 = model.as_curve(y_range, pi_star, pi_star, gamma, s, y_bar)
 
-    # Plotting
     plt.plot(y_range, ad_curve, label='AD')
     plt.plot(y_range, as_curve_0, label='AS (s=0)', color='black')
     plt.plot(y_range, as_curve_1, label='AS (s={:.2f})'.format(s), color='red')
@@ -83,16 +59,12 @@ def plot_supply_shock(s=0, y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1
     plt.legend()
 
 def plot_demand_shock(s=0, y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1, b=1, g=1, g_bar=1, tau=1/2, tau_bar=1/2, h=1, gamma=0.5):
-    # Create a range of output levels
     y_range = np.linspace(y_bar - 5, y_bar + 5, 100)
 
-    # Derive the AD and AS curves
-    alpha = alpha_2 * h / (1 + alpha_2 * b)
-    ad_curve_0 = ad(y_range, pi_star, pi_star, 1, 1, 1, 1, 1, 1, 1, 1/2, 1/2, 1, y_bar)
-    ad_curve_1 = ad(y_range, pi_star, pi_star, alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar, h, y_bar)
-    as_curve_res = as_curve(y_range, pi_star, pi_star, gamma, s, y_bar)
+    ad_curve_0 = model.ad(y_range, y_bar, pi_star, pi_star, 1, 1, 1, 1, 1, 1, 1, 1/2, 1/2)
+    ad_curve_1 = model.ad(y_range, y_bar, pi_star, pi_star, model.alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar)
+    as_curve_res = model.as_curve(y_range, pi_star, pi_star, gamma, s, y_bar)
 
-    # Plotting
     plt.plot(y_range, ad_curve_0, label='AD (z=0)', color='black')
     plt.plot(y_range, ad_curve_1, label='AD', color='blue')
     plt.plot(y_range, as_curve_res, label='AS', color='red')
@@ -101,3 +73,13 @@ def plot_demand_shock(s=0, y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1
     plt.xlabel('Output')
     plt.ylabel('Inflation (in percentage points)')
     plt.legend()
+
+# Instantiate the AS_AD_model class
+model = AS_AD_model()
+
+# Example usage
+plot_supply_shock(s=-0.5)
+plt.show()
+
+plot_demand_shock(s=-0.5)
+plt.show()
