@@ -24,11 +24,11 @@ class AS_AD_model:
         # Set parameters
         self.par = SimpleNamespace(y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1, b=1, g=1, g_bar=1, h=1, gamma=0.5, tau=0.5, tau_bar=0.5, s=0)
 
-    def ad(self, y, y_bar, pi, pi_star, alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar):
+    def ad(self, y, y_bar, pi, pi_star, alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar, h):
         z = alpha_1 / (1 + alpha_2 * b) * (g - g_bar) - alpha_3 / (1 + alpha_2 * b) * (tau - tau_bar)
         return y - y_bar - z + alpha * (pi - pi_star)
 
-    def as_curve(self, y, pi, pi_star, gamma, s, y_bar):
+    def as_curve(self, y, pi, pi_star, gamma, s, y_bar, h):
         return pi - pi_star - gamma * (y - y_bar) - s
 
     def analyze_policy_intervention(self, interest_rate):
@@ -45,9 +45,9 @@ class AS_AD_model:
 def plot_supply_shock(s=0, y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1, b=1, g=1, g_bar=1, tau=1/2, tau_bar=1/2, h=1, gamma=0.5):
     y_range = np.linspace(y_bar - 5, y_bar + 5, 100)
 
-    ad_curve = model.ad(y_range, y_bar, pi_star, pi_star, model.alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar)
-    as_curve_0 = model.as_curve(y_range, pi_star, pi_star, gamma, 0, y_bar)
-    as_curve_1 = model.as_curve(y_range, pi_star, pi_star, gamma, s, y_bar)
+    ad_curve = model.ad(y_range, y_bar, pi_star, pi_star, model.alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar, h)
+    as_curve_0 = model.as_curve(y_range, pi_star, pi_star, gamma, 0, y_bar, h)
+    as_curve_1 = model.as_curve(y_range, pi_star, pi_star, gamma, s, y_bar, h)
 
     plt.plot(y_range, ad_curve, label='AD')
     plt.plot(y_range, as_curve_0, label='AS (s=0)', color='black')
@@ -61,9 +61,9 @@ def plot_supply_shock(s=0, y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1
 def plot_demand_shock(s=0, y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1, b=1, g=1, g_bar=1, tau=1/2, tau_bar=1/2, h=1, gamma=0.5):
     y_range = np.linspace(y_bar - 5, y_bar + 5, 100)
 
-    ad_curve_0 = model.ad(y_range, y_bar, pi_star, pi_star, 1, 1, 1, 1, 1, 1, 1, 1/2, 1/2)
-    ad_curve_1 = model.ad(y_range, y_bar, pi_star, pi_star, model.alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar)
-    as_curve_res = model.as_curve(y_range, pi_star, pi_star, gamma, s, y_bar)
+    ad_curve_0 = model.ad(y_range, y_bar, pi_star, pi_star, 1, 1, 1, 1, 1, 1, 1, 1/2, 1/2, h)
+    ad_curve_1 = model.ad(y_range, y_bar, pi_star, pi_star, model.alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar, h)
+    as_curve_res = model.as_curve(y_range, pi_star, pi_star, gamma, s, y_bar, h)
 
     plt.plot(y_range, ad_curve_0, label='AD (z=0)', color='black')
     plt.plot(y_range, ad_curve_1, label='AD', color='blue')
