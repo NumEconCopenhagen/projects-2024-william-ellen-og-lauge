@@ -27,12 +27,13 @@ class ExchangeEconomyClass:
         par.w1B = 1-par.w1A
         par.w2B = 1-par.w2A
 
-    # Utility for consumer A
+    # utility for consumer A
     def utility_A(self,x1A,x2A):
         par = self.par
         utilA = x1A**par.alpha*x2A**(1-par.alpha)
         return utilA
     
+    # finding market clearing price
     def find_market_clearing_price(self):
         def objective(p1):
             eps1, eps2 = self.check_market_clearing(p1)
@@ -42,7 +43,7 @@ class ExchangeEconomyClass:
         result = fsolve(objective, p1_initial)
         return result[0]
         
-
+    # utility for consumer B
     def utility_B(self,x1B,x2B):
         par = self.par
         utilB = x1B**par.beta*x2B**(1-par.beta)
@@ -69,7 +70,7 @@ class ExchangeEconomyClass:
         x1A,x2A = self.demand_A(p1)
         x1B,x2B = self.demand_B(p1)
 
-        ## Market clearing. If the markets clear, the excess demand is zero.
+        ## Market clearing. If the markets clear, the excess demand is zero!
         eps1 = x1A-par.w1A + x1B-(1-par.w1A)
         eps2 = x2A-par.w2A + x2B-(1-par.w2A)
 
@@ -82,13 +83,13 @@ class ExchangeEconomyClass:
         util_endowment_B = self.utility_B(par.w1B, par.w2B)
         util_endowment_A = self.utility_A(par.w1A, par.w2A)
 
-        # Define the feasible set C
+        # Define the set C as described in the assignment
         N = 75
         feasible_set_C = [(x1A, x2A) for x1A in np.arange(0, N+1, 1) / N
                           for x2A in np.arange(0, N+1, 1) / N
                           if self.utility_B(1 - x1A, 1 - x2A) >= util_endowment_B]
 
-        # Initialize maximum utility and corresponding allocation for A
+        # Finding maximum utility for A and the corresponding allocation
         max_util_A = util_endowment_A
         optimal_allocation_A = (par.w1A, par.w2A)
 
