@@ -1,34 +1,33 @@
 
 
-# a. imports
+# Importing packages
 from types import SimpleNamespace
 import numpy as np
-#import scipy as sp
 from scipy.optimize import minimize
 from scipy.optimize import minimize_scalar
 from scipy.optimize import fsolve
-
 import matplotlib.pyplot as plt
 plt.rcParams.update({"axes.grid":True,"grid.color":"black","grid.alpha":"0.25","grid.linestyle":"--"})
 plt.rcParams.update({'font.size': 14})
  
-# b. imported classes
+# Defining the class ExchangeEconomyClass
 class ExchangeEconomyClass:
 
     def __init__(self):
 
         par = self.par = SimpleNamespace()
 
-        # a. preferences
+        # preferences
         par.alpha = 1/3
         par.beta = 2/3
 
-        # b. endowments
+        # endowments
         par.w1A = 0.8
         par.w2A = 0.3
         par.w1B = 1-par.w1A
         par.w2B = 1-par.w2A
 
+    # Utility for consumer A
     def utility_A(self,x1A,x2A):
         par = self.par
         utilA = x1A**par.alpha*x2A**(1-par.alpha)
