@@ -19,22 +19,26 @@ class ASAD:
         self.s_duration = s_duration
         self.delta = 0.97
     
-    def solve_model(self):
-        self.yhat_vec = []
-        self.pihat_vec = []
-        self.t_vec = []
-        for t in range(self.T):
-            yhat = pihat = z = s = 0
-            if t <= self.z_duration:
-                z = self.z
-            if t <= self.s_duration:
-                s = self.s
-            if t > 0:
-                yhat = (z - self.alpha * self.pihat_vec[t - 1] - self.alpha * s) / (1 + self.alpha * self.gamma)
-                pihat = (self.pihat_vec[t - 1] + self.gamma * z + s) / (1 + self.alpha * self.gamma)
-            self.yhat_vec.append(yhat)
-            self.pihat_vec.append(pihat)
-            self.t_vec.append(t)
+        def solve_model(self):
+            self.yhat_vec = []
+            self.pihat_vec = []
+            self.social_loss_vec = []
+            self.t_vec = []
+            for t in range(self.T):
+                yhat = pihat = z = s = 0
+                if t <= self.z_duration:
+                    z = self.z
+                if t <= self.s_duration:
+                    s = self.s
+                if t > 0:
+                    yhat = (z - self.alpha * self.pihat_vec[t - 1] - self.alpha * s) / (1 + self.alpha * self.gamma)
+                    pihat = (self.pihat_vec[t - 1] + self.gamma * z + s) / (1 + self.alpha * self.gamma)
+                self.yhat_vec.append(yhat)
+                self.pihat_vec.append(pihat)
+                # Calculate social loss as a simple function of the absolute values of gaps
+                social_loss = 1000 * (abs(yhat) + abs(pihat))  # scale factor for visualization
+                self.social_loss_vec.append(social_loss)
+                self.t_vec.append(t)
     
     def plot_results(self):
         plt.figure(figsize=(10, 6))
@@ -155,5 +159,20 @@ class ASAD:
         plt.grid()
         plt.show()
 
+    def plot_social_loss(self):
+        plt.figure(figsize=(10, 6))
+        plt.plot(self.t_vec, self.social_loss_vec, label="Social Loss", color='red', linestyle='--')
+        plt.xlabel("Periods")
+        plt.ylabel("Social Loss")
+        plt.title("Convergence of Social Loss")
+        plt.legend()
+        plt.grid(True)
+        plt.show()
 
 
+
+T = 12
+model = ASAD(T)
+model.solve_model()
+model.plot_results()
+model.plot_social_loss()
