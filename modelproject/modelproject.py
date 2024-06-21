@@ -1,142 +1,126 @@
-import sympy as sm
+import sympy as sp
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import optimize as opt
 
-class ASAD:
-    def __init__(self, T, alpha=0.7, gamma=0.075, tol=0.01, z=0, s=0, z_duration=0, s_duration=0): 
+class EconomicModel:
+    def __init__(self, periods, alpha=0.7, gamma=0.075, tolerance=0.01, demand_shock=0, supply_shock=0, demand_duration=0, supply_duration=0): 
         self.alpha = alpha 
         self.gamma = gamma 
-        self.tol = tol
-        self.T = T
-        self.z = z
-        self.s = s
-        self.z_duration = z_duration
-        self.s_duration = s_duration
-        self.delta = 0.97
+        self.tolerance = tolerance
+        self.periods = periods
+        self.demand_shock = demand_shock
+        self.supply_shock = supply_shock
+        self.demand_duration = demand_duration
+        self.supply_duration = supply_duration
+        self.discount_factor = 0.97
     
-    def solve_model(self):
-        self.yhat_vec = []
-        self.pihat_vec = []
-        self.social_loss_vec = []
-        self.t_vec = []
-        for t in range(self.T):
-            yhat = pihat = z = s = 0
-            if t <= self.z_duration:
-                z = self.z
-            if t <= self.s_duration:
-                s = self.s
-            if t > 0:
-                yhat = (z - self.alpha * self.pihat_vec[t - 1] - self.alpha * s) / (1 + self.alpha * self.gamma)
-                pihat = (self.pihat_vec[t - 1] + self.gamma * z + s) / (1 + self.alpha * self.gamma)
-            self.yhat_vec.append(yhat)
-            self.pihat_vec.append(pihat)
-            # Calculate social loss as a simple function of the absolute values of gaps
-            social_loss = 1000 * (abs(yhat) + abs(pihat))  # scale factor for visualization
-            self.social_loss_vec.append(social_loss)
-            self.t_vec.append(t)
+    def calculate_model(self):
+        self.output_gap = []
+        self.inflation_gap = []
+        self.loss_vector = []
+        self.time_vector = []
+        for time in range(self.periods):
+            y_gap = pi_gap = d_shock = s_shock = 0
+            if time <= self.demand_duration:
+                d_shock = self.demand_shock
+            if time <= self.supply_duration:
+                s_shock = self.supply_shock
+            if time > 0:
+                y_gap = (d_shock - self.alpha * self.inflation_gap[time - 1] - self.alpha * s_shock) / (1 + self.alpha * self.gamma)
+                pi_gap = (self.inflation_gap[time - 1] + self.gamma * d_shock + s_shock) / (1 + self.alpha * self.gamma)
+            self.output_gap.append(y_gap)
+            self.inflation_gap.append(pi_gap)
+            # Calculate social loss as a weighted sum of absolute value gaps
+            loss = 1000 * (abs(y_gap) + abs(pi_gap))  # scaling for visualization
+            self.loss_vector.append(loss)
+            self.time_vector.append(time)
 
-    def plot_results(self):
+    def display_results(self):
         plt.figure(figsize=(10, 6))
-        plt.plot(self.t_vec, self.yhat_vec, label="Output gap")
-        plt.plot(self.t_vec, self.pihat_vec, label="Inflation gap")
+        plt.plot(self.time_vector, self.output_gap, label="Output Gap")
+        plt.plot(self.time_vector, self.inflation_gap, label="Inflation Gap")
         plt.xlabel("Periods")
         plt.ylabel("Gap")
-        plt.title("Figure 1: Output gap and Inflation gap")
+        plt.title("Output and Inflation Gaps Over Time")
         plt.legend()
         plt.show()
 
-    def plot_ad_as(self):
-        y_values = np.linspace(-0.01, 0.01, 100)
-        pi_hat = self.pihat_vec
+    def display_ad_as(self):
+        y_vals = np.linspace(-0.01, 0.01, 100)
+        pi_hat = self.inflation_gap
 
-        def ad_function(alpha, y, t, z, z_duration):
-            if t <= z_duration:
-                z_t = z
-            else:
-                z_t = 0
-            return (-1/alpha)*(y-z_t)
+        def ad_curve(alpha, y, time, d_shock, demand_duration):
+            d_shock_t = d_shock if time <= demand_duration else 0
+            return (-1 / alpha) * (y - d_shock_t)
 
-        def as_function(alpha, pi_1, gamma, y, t, s, s_duration):
-            if t <= s_duration:
-                s_t = s
-            else:
-                s_t = 0
-            return pi_1 + gamma * y + s_t
+        def as_curve(alpha, prev_pi, gamma, y, time, s_shock, supply_duration):
+            s_shock_t = s_shock if time <= supply_duration else 0
+            return prev_pi + gamma * y + s_shock_t
 
         plt.figure(figsize=(10, 6))
-        plt.axvline(x=0, color="red", label="LRAS curve")
+        plt.axvline(x=0, color="red", label="Long Run AS Curve")
         
-        if self.s_duration < self.T:
+        if self.supply_duration < self.periods:
             plt.axhline(y=0, color='black', linestyle=':', label='Long Run Inflation Gap = 0')
-            for t in range(self.T):
-                ad_curve_t = ad_function(self.alpha, y_values, t, self.z, self.z_duration)
-                plt.plot(y_values, ad_curve_t, color="blue")
+            for time in range(self.periods):
+                ad_t = ad_curve(self.alpha, y_vals, time, self.demand_shock, self.demand_duration)
+                plt.plot(y_vals, ad_t, color="blue")
             
-            for t in range(self.T):
-                if t == 0:
-                    pi_1 = 0
-                else:
-                    pi_1 = pi_hat[t-1]
-                as_curve_t = as_function(self.alpha, pi_1, self.gamma, y_values, t, self.s, self.s_duration)
-                plt.plot(y_values, as_curve_t, color="red")
+            for time in range(self.periods):
+                prev_pi = pi_hat[time-1] if time > 0 else 0
+                as_t = as_curve(self.alpha, prev_pi, self.gamma, y_vals, time, self.supply_shock, self.supply_duration)
+                plt.plot(y_vals, as_t, color="red")
 
-            original_LRAD = ad_function(self.alpha, y_values, 0, 0, self.z_duration)
-            plt.plot(y_values, original_LRAD, color="blue", label="Original LRAD curve")
+            original_lrad = ad_curve(self.alpha, y_vals, 0, 0, self.demand_duration)
+            plt.plot(y_vals, original_lrad, color="blue", label="Original LRAD Curve")
 
-        if self.s_duration == self.T:
+        if self.supply_duration == self.periods:
             plt.axhline(y=0, color='black', linestyle=':', label='Long Run Inflation Gap = 0')
-            original_LRAD = ad_function(self.alpha, y_values, 0, 0, self.z_duration)
-            plt.plot(y_values, original_LRAD, color="blue", label="Original LRAD curve")
-            plt.axvline(x=-self.s, color="red", label="LRAS2 curve")
+            original_lrad = ad_curve(self.alpha, y_vals, 0, 0, self.demand_duration)
+            plt.plot(y_vals, original_lrad, color="blue", label="Original LRAD Curve")
+            plt.axvline(x=-self.supply_shock, color="red", label="Adjusted LRAS Curve")
 
-            if self.s < 0: 
-                adjusted_LRAD2 = ad_function(self.alpha, y_values, 0, -self.s, self.z_duration)
-            else:
-                adjusted_LRAD2 = ad_function(self.alpha, y_values, 0, -self.s, self.z_duration)
-            plt.plot(y_values, adjusted_LRAD2, color="blue", linestyle="--", label="Adjusted LRAD2 curve")
+            adjusted_lrad2 = ad_curve(self.alpha, y_vals, 0, -self.supply_shock, self.demand_duration)
+            plt.plot(y_vals, adjusted_lrad2, color="blue", linestyle="--", label="Adjusted LRAD Curve")
 
         plt.annotate(r'$\overline{y}$', xy=(-0.0015, -0.0125), fontsize=12)
         plt.annotate(r'$\overline{\pi}$', xy=(-0.0105, -0.0015), fontsize=12)
-        plt.xlabel(r'Output gap $(\hat{y})$')
-        plt.ylabel(r'Inflation gap $(\hat{\pi})$')
+        plt.xlabel(r'Output Gap $(\hat{y})$')
+        plt.ylabel(r'Inflation Gap $(\hat{\pi})$')
         
-        if self.z_duration > 0 and self.z_duration < self.T:
-            plt.title(f"Figure 2: {self.z_duration} period positive demand shock")
-        elif self.z_duration == 0 and self.s_duration == self.T:
-            plt.title(f"Figure 2: Permanent supply shock and Central Bank response")
+        if 0 < self.demand_duration < self.periods:
+            plt.title(f"Positive Demand Shock for {self.demand_duration} Periods")
+        elif self.demand_duration == 0 and self.supply_duration == self.periods:
+            plt.title(f"Permanent Supply Shock with Central Bank Response")
         plt.grid()
         plt.show()
 
-    def plot_social_loss(self):
+    def display_social_loss(self):
         plt.figure(figsize=(10, 6))
-        plt.plot(self.t_vec, self.social_loss_vec, label="Social Loss", color='red', linestyle='--')
+        plt.plot(self.time_vector, self.loss_vector, label="Social Loss", color='red', linestyle='--')
         plt.xlabel("Periods")
         plt.ylabel("Social Loss")
-        plt.title("Convergence of Social Loss")
+        plt.title("Convergence of Social Loss Over Time")
         plt.legend()
         plt.grid(True)
         plt.show()
 
-    def optimize_parameters(self):
-        def social_loss(args):
-            alpha, gamma = args
+    def find_optimal_parameters(self):
+        def loss_function(params):
+            alpha, gamma = params
             self.alpha = alpha
             self.gamma = gamma
-            self.solve_model()
-            return np.sum(self.social_loss_vec)
+            self.calculate_model()
+            return np.sum(self.loss_vector)
         
         initial_guess = [self.alpha, self.gamma]
-        result = opt.minimize(social_loss, initial_guess, method='trust-constr')
+        result = opt.minimize(loss_function, initial_guess, method='trust-constr')
         
         optimal_alpha, optimal_gamma = result.x
-        optimal_social_loss = result.fun
+        optimal_loss = result.fun
         
-        return optimal_alpha, optimal_gamma, optimal_social_loss
-
-# Create an instance of the ASAD class
+        return optimal_alpha, optimal_gamma, optimal_loss
 
 
-# Plot the social loss convergence
-model.plot_social_loss()
