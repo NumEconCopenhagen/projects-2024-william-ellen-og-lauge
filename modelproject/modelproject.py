@@ -6,98 +6,154 @@ from types import SimpleNamespace
 from ipywidgets import interact, FloatSlider
 
 # AS/AD model for a closed economy in the short run
-class AS_AD_model:
-    def __init__(self):
-        self.y, self.pi, self.g, self.b, self.alpha_1, self.alpha_2, self.alpha_3, self.h, self.s, self.y_bar, self.pi_star, self.tau, self.tau_bar = sm.symbols(
-            'y pi g b alpha_1 alpha_2 alpha_3 h s y_bar pi_star tau tau_bar')
 
-        # Define the AD and AS curves using sympy expressions
-        z = self.alpha_1 / (1 + self.alpha_2 * self.b) * (self.g - self.y_bar) - self.alpha_3 / (1 + self.alpha_2 * self.b) * (self.tau - self.tau_bar)
-        self.alpha = self.alpha_2 * self.h / (1 + self.alpha_2 * self.b)
-        self.AD = self.y - self.y_bar - z + self.alpha * (self.pi - self.pi_star)
-        self.gamma = sm.symbols('gamma')
-        self.AS = self.pi - self.pi_star - self.gamma * (self.y - self.y_bar) - self.s
-
-        # Solve the steady state equation
-        self.steady_state_eq = sm.solve(sm.Eq(self.AD, self.AS), self.y)[0]
-        self.ss_func = sm.lambdify(
-            (self.pi, self.g, self.b, self.alpha_1, self.alpha_2, self.alpha_3, self.h, self.s, self.y_bar, self.pi_star, self.gamma, self.tau, self.tau_bar),
-            self.steady_state_eq)
-
-        # Set parameters
-        self.par = SimpleNamespace(y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1, b=1, g=1, g_bar=1, h=1, gamma=0.5, tau=0.5, tau_bar=0.5, s=0)
-
-    def ad(self, y, y_bar, pi, pi_star, alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, h, tau, tau_bar):
-        #Defining the AD-curve equation
-        z = alpha_1 / (1 + alpha_2 * b) * (g - g_bar) - alpha_3 / (1 + alpha_2 * b) * (tau - tau_bar)
-        return y - y_bar - z + alpha * (pi - pi_star)
-
-    def as_curve(self, y, pi, pi_1, gamma, s):
-        #Defining the AS-curve equation
-        return pi - pi_1 - gamma * (y - self.y_bar) - s
-
-    def analyze_policy_intervention(self, interest_rate):
-        #Assuming no supply shocks 
-        self.s = 0
-
-        #Calculating steady state before policy intervention
-        steady_state_before = self.ss_func(self.par.pi_star, self.par.g, self.par.b, self.par.alpha_1, self.par.alpha_2, self.par.alpha_3, self.par.h, self.s,
-                           self.par.y_bar, self.par.pi_star, self.par.gamma, self.par.tau, self.par.tau_bar)
-
-        #Applying the policy intervention (decrease in interest rate)
-        self.s = interest_rate
-
-        #Calculating steady state after policy intervention
-        steady_state_after = self.ss_func(self.par.pi_star, self.par.g, self.par.b, self.par.alpha_1, self.par.alpha_2, self.par.alpha_3, self.par.h, self.s,
-                           self.par.y_bar, self.par.pi_star, self.par.gamma, self.par.tau, self.par.tau_bar)
-
-        return steady_state_before, steady_state_after
-
+class ASAD:
+    def __init__(self, T, alpha=0.7, gamma=0.075, tol=0.01, z=0, s=0, z_duration=0, s_duration=0): 
+        self.alpha = alpha 
+        self.gamma = gamma 
+        self.tol = tol
+        self.T = T
+        self.z = z
+        self.s = s
+        self.z_duration = z_duration
+        self.s_duration = s_duration
+        self.delta = 0.97
     
+    def solve_model(self):
+        self.yhat_vec = []
+        self.pihat_vec = []
+        self.t_vec = []
+        for t in range(self.T):
+            yhat = pihat = z = s = 0
+            if t <= self.z_duration:
+                z = self.z
+            if t <= self.s_duration:
+                s = self.s
+            if t > 0:
+                yhat = (z - self.alpha * self.pihat_vec[t - 1] - self.alpha * s) / (1 + self.alpha * self.gamma)
+                pihat = (self.pihat_vec[t - 1] + self.gamma * z + s) / (1 + self.alpha * self.gamma)
+            self.yhat_vec.append(yhat)
+            self.pihat_vec.append(pihat)
+            self.t_vec.append(t)
     
-def ad(y, pi, pi_star, alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar, h, y_bar):
-    z = alpha_1 / (1 + alpha_2 * b) * (g - g_bar) - alpha_3 / (1 + alpha_2 * b) * (tau - tau_bar)
-    return y - y_bar - z + alpha * (pi - pi_star)
+    def plot_results(self):
+        plt.figure(figsize=(10, 6))
+        plt.plot(self.t_vec, self.yhat_vec, label="Output gap")
+        plt.plot(self.t_vec, self.pihat_vec, label="Inflation gap")
+        plt.xlabel("Periods")
+        plt.ylabel("Gap")
+        plt.title("Output gap and Inflation gap")
+        plt.legend()
+        plt.show()
 
-def as_curve(y, pi, pi_1, gamma, s, y_bar):
-    return pi - pi_1 - gamma * (y - y_bar) - s
+    def plot_ad_as(self):
+        
+        """ Creating and plotting the AD and AS curves of the given output and inflation gaps
+        args:
+        self (class): class with initial values for the parameters
+        
+        Returns: 
+        
+        original_LRAD (list): list of original LRAD curve
+        lras_curve (list): list of LRAS curve
+        plot (plot): plot of AD and AS curves
 
-def plot_supply_shock(s=0, y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1, b=1, g=1, g_bar=1, tau=1/2, tau_bar=1/2, h=1, gamma=0.5):
-    # Create a range of output levels
-    y_range = np.linspace(y_bar - 5, y_bar + 5, 100)
+        
+        Returns: Temporary shocks:
+        
+        ad_curve_t (list): list of AD curves
+        as_curve_t (list): list of AS curves
+        
+        Returns: Permenant shocks:
+        
+        adjusted_LRAD (list): list of adjusted LRAD curve
+        LRAS2 (list): list of LRAS2 curve
+        
+        """
+        # a. Create y_values & pi_hat
+        
+        y_values = np.linspace(-0.01, 0.01, 100)
+        pi_hat = self.pihat_vec
+        # b. Create functions for AD and AS curves
+        
+        def ad_function(alpha, y, t, z, z_duration):
+            if t <= z_duration:
+                z_t = z
+            else:
+                z_t = 0
+            return (-1/alpha)*(y-z_t)
 
-    # Derive the AD and AS curves
-    alpha = alpha_2 * h / (1 + alpha_2 * b)
-    ad_curve = ad(y_range, pi_star, pi_star, alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar, h, y_bar)
-    as_curve_0 = as_curve(y_range, pi_star, pi_star, gamma, 0, y_bar)
-    as_curve_1 = as_curve(y_range, pi_star, pi_star, gamma, s, y_bar)
+        def as_function(alpha, pi_1, gamma, y, t, s, s_duration):
+            
+            if t <= s_duration:
+                s_t = s
+            else:
+                s_t = 0
+            return pi_1 + gamma * y + s_t
 
-    # Plotting
-    plt.plot(y_range, ad_curve, label='AD')
-    plt.plot(y_range, as_curve_0, label='AS (s=0)', color='black')
-    plt.plot(y_range, as_curve_1, label='AS (s={:.2f})'.format(s), color='red')
-    plt.ylim([-4, 4])
+        # Initiate plot
+        
+        plt.figure(figsize=(10, 6))
+        plt.axvline(x=0, color="red", label="LRAS curve") #LRAS curve
+        
+        # The case for short-term shocks
+        if self.s_duration < self.T:
+            
+            plt.axhline(y=0, color='black', linestyle=':', label='Long Run Inflation Gap = 0') #LRAS curve
+            for t in range(self.T): #plotting AD curve for each period
+                
+                ad_curve_t = ad_function(self.alpha, y_values, t, self.z, self.z_duration)
+                plt.plot(y_values, ad_curve_t, color="blue")
+            # Creating and plotting the SRAS curves
+            
+            for t in range(self.T):
+                if t == 0:
+                    pi_1 = 0
+                else:
+                    pi_1 = pi_hat[t-1]
+                    
+                as_curve_t = as_function(self.alpha, pi_1, self.gamma, y_values, t, self.s, self.s_duration)
+                plt.plot(y_values, as_curve_t, color="red")
 
-    plt.xlabel('Output')
-    plt.ylabel('Inflation (in percentage points)')
-    plt.legend()
+            # Original LRAD curve when s_duration < self.T
+            
+            original_LRAD = ad_function(self.alpha, y_values, 0, 0, self.z_duration)
+            plt.plot(y_values, original_LRAD, color="blue", label="Original LRAD curve")
+        # The case for permanent shocks
+        
+        if self.s_duration == self.T:
+            plt.axhline(y=0, color='black', linestyle=':', label='Long Run Inflation Gap = 0')
+            # Original LRAD curve
+            
+            original_LRAD = ad_function(self.alpha, y_values, 0, 0, self.z_duration)
+            plt.plot(y_values, original_LRAD, color="blue", label="Original LRAD curve")
 
-def plot_demand_shock(s=0, y_bar=100, pi_star=2, alpha_1=1, alpha_2=1, alpha_3=1, b=1, g=1, g_bar=1, tau=1/2, tau_bar=1/2, h=1, gamma=0.5):
-    # Create a range of output levels
-    y_range = np.linspace(y_bar - 5, y_bar + 5, 100)
+            # New LRAS (LRAS2)
+            plt.axvline(x=-self.s, color="red", label="LRAS2 curve")
 
-    # Derive the AD and AS curves
-    alpha = alpha_2 * h / (1 + alpha_2 * b)
-    ad_curve_0 = ad(y_range, pi_star, pi_star, 1, 1, 1, 1, 1, 1, 1, 1/2, 1/2, 1, y_bar)
-    ad_curve_1 = ad(y_range, pi_star, pi_star, alpha, alpha_1, alpha_2, alpha_3, b, g, g_bar, tau, tau_bar, h, y_bar)
-    as_curve_res = as_curve(y_range, pi_star, pi_star, gamma, s, y_bar)
+            # Adjusted LRAD2 curve (Central Bank response)
+            
+            if self.s < 0:  # Positive permanent supply shock
+                adjusted_LRAD2 = ad_function(self.alpha, y_values, 0, -self.s, self.z_duration)
+                
+            else:
+                adjusted_LRAD2 = ad_function(self.alpha, y_values, 0, -self.s, self.z_duration)
+            plt.plot(y_values, adjusted_LRAD2, color="blue", linestyle="--", label="Adjusted LRAD2 curve")
 
-    # Plotting
-    plt.plot(y_range, ad_curve_0, label='AD (z=0)', color='black')
-    plt.plot(y_range, ad_curve_1, label='AD', color='blue')
-    plt.plot(y_range, as_curve_res, label='AS', color='red')
-    plt.ylim([-4, 4])
+        # Details for the plot
+        
+        plt.annotate(r'$\overline{y}$', xy=(-0.0015, -0.0125), fontsize=12)
+        plt.annotate(r'$\overline{\pi}$', xy=(-0.0105, -0.0015), fontsize=12)
+        plt.xlabel(r'Output gap $(\hat{y})$')
+        plt.ylabel(r'Inflation gap $(\hat{\pi})$')
+        
+        if self.z_duration > 0 and self.z_duration < self.T:
+            plt.title(f"Figure 2: {self.z_duration} period positive demand shock")
+            
+        elif self.z_duration == 0 and self.s_duration == self.T:
+            plt.title(f"Figure 2: Permanent supply shock and Central Bank response")
+        plt.grid()
+        plt.show()
 
-    plt.xlabel('Output')
-    plt.ylabel('Inflation (in percentage points)')
-    plt.legend()
+
+
