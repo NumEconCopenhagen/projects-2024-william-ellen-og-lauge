@@ -46,7 +46,7 @@ class ASAD:
         plt.plot(self.t_vec, self.pihat_vec, label="Inflation gap")
         plt.xlabel("Periods")
         plt.ylabel("Gap")
-        plt.title("Output gap and Inflation gap")
+        plt.title("Figure 1: Output gap and Inflation gap")
         plt.legend()
         plt.show()
 
