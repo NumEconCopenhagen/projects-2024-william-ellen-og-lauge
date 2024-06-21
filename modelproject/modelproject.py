@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from scipy import optimize as opt
 
 class EconomicModel:
-    def __init__(self, periods, alpha=0.7, gamma=0.075, tolerance=0.01, demand_shock=0, supply_shock=0, demand_duration=0, supply_duration=0): 
+    def __init__(self, periods, alpha=0.7, gamma=0.075, tolerance=0.01, demand_shock=0.1, supply_shock=0.05, demand_duration=1, supply_duration=1): 
         self.alpha = alpha 
         self.gamma = gamma 
         self.tolerance = tolerance
@@ -109,18 +109,43 @@ class EconomicModel:
 
     def find_optimal_parameters(self):
         def loss_function(params):
-            alpha, gamma = params
+            alpha = params[0]
             self.alpha = alpha
-            self.gamma = gamma
             self.calculate_model()
             return np.sum(self.loss_vector)
         
-        initial_guess = [self.alpha, self.gamma]
-        result = opt.minimize(loss_function, initial_guess, method='trust-constr')
+        initial_guess = [self.alpha]
+        bounds = [(0.1, 1.5)]  # Setting bounds for alpha
+        result = opt.minimize(loss_function, initial_guess, bounds=bounds, method='L-BFGS-B')
         
-        optimal_alpha, optimal_gamma = result.x
+        optimal_alpha = result.x[0]
         optimal_loss = result.fun
         
-        return optimal_alpha, optimal_gamma, optimal_loss
+        return optimal_alpha, optimal_loss
+
+    def output_gap_after_shock(self):
+        self.calculate_model()
+        if len(self.output_gap) > 1:
+            return abs(self.output_gap[1])
+        return float('inf')  # Return a large number if the output gap cannot be calculated
+
+    def optimize_output_gap(self):
+        def gap_function(params):
+            alpha = params[0]
+            self.alpha = alpha
+            self.calculate_model()
+            output_gap = self.output_gap_after_shock()
+            #print(f"alpha: {alpha}, output_gap: {output_gap}")  # Debug information
+            return output_gap
+        
+        initial_guess = [self.alpha]
+        bounds = [(0.1, 25)]  # Setting bounds for alpha
+        result = opt.minimize(gap_function, initial_guess, bounds=bounds, method='L-BFGS-B')
+        
+        optimal_alpha = result.x[0]
+        optimal_output_gap = self.output_gap_after_shock()
+        
+        return optimal_alpha, optimal_output_gap
 
 
+# Example usage
