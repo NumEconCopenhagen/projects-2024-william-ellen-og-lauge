@@ -169,5 +169,7 @@ class ASAD:
         plt.grid(True)
         plt.show()
 
+    
+
 
 
