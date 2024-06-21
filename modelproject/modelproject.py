@@ -169,7 +169,16 @@ class ASAD:
         plt.grid(True)
         plt.show()
 
-    
-
-
-
+    def social_loss_gamma(self, gamma, seed):
+        np.random.seed(seed)
+        # Simulating random shocks over T periods
+        shocks = np.random.normal(0, 1, self.T)
+        social_loss = 0
+        pihat = 0
+        for t in range(self.T):
+            # Output response to shock based on current gamma
+            yhat = shocks[t] - self.alpha * pihat
+            pihat = pihat + gamma * yhat  # Adjust inflation based on gamma and output gap
+            # Calculate social loss as sum of squares of output and inflation gaps
+            social_loss += (yhat**2 + pihat**2)
+        return social_loss / self.T  # Average loss over periods
