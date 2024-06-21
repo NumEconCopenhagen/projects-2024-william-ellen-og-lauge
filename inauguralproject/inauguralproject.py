@@ -103,7 +103,7 @@ class ExchangeEconomyClass:
 
         return optimal_allocation_A, max_util_A
     
-   def market_clearing_price_Q8(self,p1,maxitter=500):
+    def market_clearing_price_Q8(self,p1,maxitter=500):
         par = self.par
         eps = 1e-8    
         t = 0
