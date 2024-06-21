@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from scipy import optimize as opt
 
 class ASAD:
-    def __init__(self, T, alpha=0.7, gamma=0.075, tol=0.01, z=0, s=0, z_duration=0, s_duration=0): 
+    def __init__(self, T, alpha=0.7, gamma=1, tol=0.01, z=0, s=0, z_duration=0, s_duration=0): 
         self.alpha = alpha 
         self.gamma = gamma 
         self.tol = tol
@@ -119,24 +119,17 @@ class ASAD:
         plt.grid(True)
         plt.show()
 
-    def optimize_parameters(self):
-        def social_loss(args):
-            alpha, gamma = args
+    def optimize_alpha(self):
+        def social_loss(alpha):
             self.alpha = alpha
-            self.gamma = gamma
             self.solve_model()
             return np.sum(self.social_loss_vec)
         
-        initial_guess = [self.alpha, self.gamma]
+        initial_guess = [self.alpha]
         result = opt.minimize(social_loss, initial_guess, method='trust-constr')
         
-        optimal_alpha, optimal_gamma = result.x
+        optimal_alpha = result.x[0]
         optimal_social_loss = result.fun
         
-        return optimal_alpha, optimal_gamma, optimal_social_loss
+        return optimal_alpha, optimal_social_loss
 
-# Create an instance of the ASAD class
-
-
-# Plot the social loss convergence
-model.plot_social_loss()
